@@ -4,7 +4,7 @@
     {
         static void Main()
         {
-            // Code
+            // Create a new instance of GameManager and run the game
         }
     }
 }
