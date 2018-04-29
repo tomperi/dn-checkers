@@ -36,7 +36,7 @@ namespace checkers
             return false;
         }
 
-        protected void PrintMessage(listOfMessages i_Message)
+        protected void PrintMessage(eListOfMessages i_Message)
         {
             // prints some message to the screen
         }

@@ -3,8 +3,7 @@
     public class Player
     {
         private string m_Name;
-        private playerType m_Type;
-        private pieceColor m_Color;
+        private ePlayerType m_Type;
         private Move?[] m_MoveHistory;
         private int m_Points = 0;
 
@@ -33,7 +32,7 @@
             }
         }
 
-        protected playerType Type
+        protected ePlayerType Type
         {
             get 
             {
@@ -43,19 +42,6 @@
             {
                 m_Type = value;
             }
-        }
-
-        protected pieceColor Color
-        {
-            get
-            {
-                return m_Color;
-            }
-            set
-            {
-                m_Color = value;
-            }
-
         }
 
         protected void ClearMoveHistory()

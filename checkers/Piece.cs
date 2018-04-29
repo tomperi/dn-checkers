@@ -2,14 +2,14 @@
 {
     struct Piece
     {
-        private pieceColor m_Color;
-        private pieceType m_Type;
+        private ePiecePlayer m_Player;
+        private ePieceType m_Type;
 
-        Piece(pieceColor i_Color, pieceType i_Type)
+        public Piece(ePiecePlayer i_Player)
         {            
             // new piece constructor
-            m_Color = i_Color;
-            m_Type = i_Type;
+            m_Player = i_Player;
+            m_Type = ePieceType.regular;
         }
 
         public void SetKing()

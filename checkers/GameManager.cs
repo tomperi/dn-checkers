@@ -5,14 +5,14 @@ using System.Text;
 namespace checkers
 {
     // add e_ to all enums
-    public enum boardSize { small, medium, large }
-    public enum gameStatus { playing, win, draw }
-    public enum playerType { human, computer }
-    public enum pieceColor { black, white }
-    public enum pieceType { regular, king }
-    public enum moveType { regular, jump }
-    public enum moveStatus { legal, logicError } // syntax error should be checked in the UI part
-    public enum listOfMessages { } // all possible ui messages 
+    public enum eBoardSize { small = 6, medium = 8, large = 10}
+    public enum eGameStatus { playing, win, draw }
+    public enum ePlayerType { human, computer }
+    public enum ePiecePlayer { player1, player2 }
+    public enum ePieceType { regular, king }
+    public enum eMoveType { regular, jump }
+    public enum eMoveStatus { legal, logicError } // syntax error should be checked in the UI part
+    public enum eListOfMessages { } // all possible ui messages 
 
     class GameManager
     {
@@ -32,10 +32,10 @@ namespace checkers
             // the function that runs the entire game
         }
 
-        private moveStatus checkMoveLegalality(Move i_Move)
+        private eMoveStatus checkMoveLegalality(Move i_Move)
         {
             // check if the move is legal
-            return moveStatus.legal;
+            return eMoveStatus.legal;
         }
 
         private Move getRandomMove(Player i_Player)
