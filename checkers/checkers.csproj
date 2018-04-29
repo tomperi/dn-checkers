@@ -31,6 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Board.cs" />
+    <Compile Include="CheckersConsolUI.cs" />
+    <Compile Include="GameManager.cs" />
+    <Compile Include="Move.cs" />
+    <Compile Include="Piece.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
