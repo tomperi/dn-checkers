@@ -7,7 +7,6 @@ namespace checkers
 
     class CheckersConsolUI
     {
-        public const int MAX_NAME_SIZE = 20;
         public const string PLAYER_1_REGULAR = "O";
         public const string PLAYER_1_KING = "U";
         public const string PLAYER_2_REGULAR = "X";
@@ -108,11 +107,6 @@ namespace checkers
         public static void ClearScreen()
         {
             // call the dll function that clears the screen
-        }
-
-        private static bool checkName(string i_Name)
-        {
-            return (i_Name.Length <= MAX_NAME_SIZE);
         }
 
         private static bool parseMove(string i_UserInput, Move i_Move)

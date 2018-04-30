@@ -13,6 +13,8 @@ namespace checkers
     public enum eListOfMessages { } // all possible ui messages 
     public enum eSquareStatus { empty, outOfBounds, occupied}
 
+
+
     class GameManager
     {
         Board m_Board;
@@ -20,6 +22,14 @@ namespace checkers
         Player m_Player2;
         Move?[] m_MoveHistory;
         Player m_CurrentPlayer;
+
+
+//        public const int MAX_NAME_SIZE = 20;
+//
+//        private static bool checkName(string i_Name)
+//        {
+//            return (i_Name.Length <= MAX_NAME_SIZE);
+//        }
 
         public GameManager()
         {
