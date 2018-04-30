@@ -131,5 +131,21 @@ namespace checkers
 
             System.Console.Out.Write(listOfMoveStringBuilder);
         }
+
+        public static void PrintMove(Move i_Move)
+        {
+            // Print a move in the format ROWcol>ROWCOL
+            StringBuilder moveStringBuilder = new StringBuilder();
+
+            char startRow = (char) ('A' + i_Move.Begin.Row);
+            char startCol = (char) ('a' + i_Move.Begin.Col);
+            moveStringBuilder.Append(startRow + "" + startCol + ">");
+
+            char endRow = (char) ('A' + i_Move.End.Row);
+            char endCol = (char) ('a' + i_Move.End.Col);
+            moveStringBuilder.Append(endRow + "" + endCol);
+
+            System.Console.Out.Write(moveStringBuilder.ToString());
+        }
     }
 }
