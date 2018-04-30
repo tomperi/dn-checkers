@@ -104,7 +104,7 @@ namespace checkers
                 }
             }
 
-            if(isJumpPossible(possibleMoves, out List<Move> onlyJumps))
+            if (isJumpPossible(possibleMoves, out List<Move> onlyJumps))
                 possibleMoves = onlyJumps;
 
             return possibleMoves;

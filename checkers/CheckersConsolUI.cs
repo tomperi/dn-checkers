@@ -109,10 +109,41 @@ namespace checkers
             Ex02.ConsoleUtils.Screen.Clear();
         }
 
-        private static bool parseMove(string i_UserInput, Move i_Move)
+        public static bool ParseMove(string i_UserInput, out Move? parsedMove)
         {
-            // parse the user input into a move type or return false
-            return false;
+            // Gets a user input, if valid returns it as 2 positions
+            bool validSyntax = true;
+            string moveString = i_UserInput.ToLower();
+            int[] moveInteger = new int[5]; 
+            parsedMove = null;
+
+            // A move should have 5 letters only, with '>' in the middle
+            if ((moveString.Length != 5) || (moveString[2] != '>'))
+            {
+                validSyntax = false;
+            }
+
+            for (int i = 0; i < moveString.Length; i++)
+            {
+                if (!char.IsLetter(moveString[i]) && (moveString[i] != '>'))
+                {
+                    validSyntax = false;
+                }
+                else
+                {
+                    moveInteger[i] = (int) moveString[i] - 'a';
+                }
+            }
+
+            // If all checks are valid, create new positions
+            if (validSyntax)
+            {
+                Position startPosition = new Position(moveInteger[0], moveInteger[1]);
+                Position endPosition = new Position(moveInteger[3], moveInteger[4]);
+                parsedMove = new Move(startPosition, endPosition);
+            }
+
+            return validSyntax;
         }
 
         public static void PrintMessage(eListOfMessages i_Message)

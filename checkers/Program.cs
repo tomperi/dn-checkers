@@ -7,6 +7,20 @@ namespace checkers
     {
         static void Main()
         {
+            CheckersConsolUI.ParseMove("AA>BB", out Move? parsedMove);
+            if (parsedMove != null) 
+                CheckersConsolUI.PrintMove(parsedMove.Value);
+
+            System.Console.Out.WriteLine();
+
+            CheckersConsolUI.ParseMove("YX>zU", out parsedMove);
+            if (parsedMove != null)
+                CheckersConsolUI.PrintMove(parsedMove.Value);
+
+
+
+            System.Console.Out.WriteLine();
+
             // Create a new instance of GameManager and run the game
             Board board = new Board();
             board.m_Board[3, 4] = new Piece(ePlayer.BottomPlayer);
@@ -18,12 +32,12 @@ namespace checkers
 
             CheckersConsolUI.PrintBoard(board.GetBoard());
 
-            List<Move> possibleMoves = board.GetPossibleMoves(ePlayer.TopPlayer, new Move());
+            List<Move> possibleMoves = board.GetPossibleMoves(ePlayer.TopPlayer, null);
 
             System.Console.Out.WriteLine("Possible moves for top player");
             CheckersConsolUI.PrintListOfMoves(possibleMoves);
 
-            possibleMoves = board.GetPossibleMoves(ePlayer.BottomPlayer, new Move());
+            possibleMoves = board.GetPossibleMoves(ePlayer.BottomPlayer, null);
 
             System.Console.Out.WriteLine("Possible moves for bottom player");
             CheckersConsolUI.PrintListOfMoves(possibleMoves);
@@ -39,12 +53,12 @@ namespace checkers
             // REPRINT BOARD AND CALCULATE MOVES
             CheckersConsolUI.PrintBoard(board.GetBoard());
 
-            possibleMoves = board.GetPossibleMoves(ePlayer.TopPlayer, new Move());
+            possibleMoves = board.GetPossibleMoves(ePlayer.TopPlayer, null);
 
             System.Console.Out.WriteLine("Possible moves for top player");
             CheckersConsolUI.PrintListOfMoves(possibleMoves);
 
-            possibleMoves = board.GetPossibleMoves(ePlayer.BottomPlayer, new Move());
+            possibleMoves = board.GetPossibleMoves(ePlayer.BottomPlayer, null);
 
             System.Console.Out.WriteLine("Possible moves for bottom player");
             CheckersConsolUI.PrintListOfMoves(possibleMoves);
