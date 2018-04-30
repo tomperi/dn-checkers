@@ -23,14 +23,6 @@ namespace checkers
         Move?[] m_MoveHistory;
         Player m_CurrentPlayer;
 
-
-//        public const int MAX_NAME_SIZE = 20;
-//
-//        private static bool checkName(string i_Name)
-//        {
-//            return (i_Name.Length <= MAX_NAME_SIZE);
-//        }
-
         public GameManager()
         {
             // default constructor

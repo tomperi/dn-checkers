@@ -106,7 +106,7 @@ namespace checkers
 
         public static void ClearScreen()
         {
-            // call the dll function that clears the screen
+            Ex02.ConsoleUtils.Screen.Clear();
         }
 
         private static bool parseMove(string i_UserInput, Move i_Move)

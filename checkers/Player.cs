@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace checkers
 {
@@ -10,6 +11,8 @@ namespace checkers
         private int m_Points = 0;
         private ePlayer m_NumberPlayer;
 
+        public const int MAX_NAME_SIZE = 20;
+
         public string Name 
         {
             get
@@ -18,7 +21,14 @@ namespace checkers
             }
             set
             {
-                m_Name = value; 
+                if (value.Length <= MAX_NAME_SIZE)
+                {
+                    m_Name = value;
+                }
+                else
+                {
+                    throw new Exception("Name too long");
+                }
             }
         }
 
