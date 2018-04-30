@@ -8,11 +8,10 @@ namespace checkers
     public enum eBoardSize { small = 6, medium = 8, large = 10}
     public enum eGameStatus { playing, win, draw }
     public enum ePlayerType { human, computer }
-    public enum ePiecePlayer { player1, player2 }
-    public enum ePieceType { regular, king }
     public enum eMoveType { regular, jump }
-    public enum eMoveStatus { legal, logicError } // syntax error should be checked in the UI part
+    public enum eMoveStatus { legal, illegal } // syntax error should be checked in the UI part
     public enum eListOfMessages { } // all possible ui messages 
+    public enum eSquareStatus { empty, outOfBounds, occupied}
 
     class GameManager
     {

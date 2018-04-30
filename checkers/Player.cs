@@ -1,13 +1,16 @@
-﻿namespace checkers
+﻿using System.Collections.Generic;
+
+namespace checkers
 {
     public class Player
     {
         private string m_Name;
-        private ePlayerType m_Type;
-        private Move?[] m_MoveHistory;
+        private ePlayerType m_PlayerType;
+        private List<Move> m_MoveHistory;
         private int m_Points = 0;
+        private ePlayer m_NumberPlayer;
 
-        protected string Name 
+        public string Name 
         {
             get
             {
@@ -19,7 +22,7 @@
             }
         }
 
-        protected int Points 
+        public int Points 
         {
             get
             {
@@ -32,15 +35,23 @@
             }
         }
 
-        protected ePlayerType Type
+        public ePlayerType PlayerType
         {
             get 
             {
-                return m_Type;
+                return m_PlayerType;
             }
             set
             {
-                m_Type = value;
+                m_PlayerType = value;
+            }
+        }
+
+        public ePlayer PlayerNumber
+        {
+            get
+            {
+                return m_NumberPlayer;
             }
         }
 
@@ -52,6 +63,11 @@
         protected void AddMove()
         {
             // add a move to the players move history
+        }
+
+        public Move GetLastMove()
+        {
+            return m_MoveHistory[m_MoveHistory.Count - 1];
         }
     }
 }
