@@ -98,10 +98,23 @@ namespace checkers
             return lineSeperator.ToString();
         }
 
-        public static string GetUserInput()
+        public static string GetUserNameInput()
         {
-            // Get an input from the user
-            return null;
+            System.Console.Out.WriteLine("Please enter your name");
+            string name = System.Console.In.ReadLine();
+            return name;
+        }
+
+        public static Move GetUserMoveInput()
+        {
+            System.Console.Out.WriteLine("Please enter your move:");
+            Move? move;
+            while (!TryParseMove(System.Console.In.ReadLine(), out move))
+            {
+                System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
+            }
+
+            return move.Value;
         }    
 
         public static void ClearScreen()
@@ -109,7 +122,7 @@ namespace checkers
             Ex02.ConsoleUtils.Screen.Clear();
         }
 
-        public static bool ParseMove(string i_UserInput, out Move? parsedMove)
+        public static bool TryParseMove(string i_UserInput, out Move? parsedMove)
         {
             // Gets a user input, if valid returns it as 2 positions
             bool validSyntax = true;
@@ -123,7 +136,7 @@ namespace checkers
                 validSyntax = false;
             }
 
-            for (int i = 0; i < moveString.Length; i++)
+            for (int i = 0; i < moveInteger.Length; i++)
             {
                 if (!char.IsLetter(moveString[i]) && (moveString[i] != '>'))
                 {
