@@ -55,11 +55,27 @@ namespace checkers
                 m_Board[i_Move.End.Row, i_Move.End.Col] = m_Board[i_Move.Begin.Row, i_Move.Begin.Col];
                 m_Board[i_Move.Begin.Row, i_Move.Begin.Col] = null;
                 o_MoveStatus = eMoveStatus.legal;
+                checkKing(i_Move.End);
             }
             else
             {
                 o_MoveStatus = eMoveStatus.illegal;
             } 
+        }
+
+        private void checkKing(Position i_Position)
+        {
+            Piece piece = m_Board[i_Position.Row, i_Position.Col];
+
+            if ((i_Position.Row == 0) && (piece.PlayerNumber == ePlayer.BottomPlayer))
+            {
+                piece.SetKing();
+                // maybe m_Board[i_Position.Row, i_Position.Col].setKing()?
+            }
+            else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerNumber == ePlayer.TopPlayer))
+            {
+                piece.SetKing();
+            }
         }
 
         private bool checkMoveLegality(Move i_Move, Move? i_PreviousMove)
