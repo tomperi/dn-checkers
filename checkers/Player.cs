@@ -10,8 +10,11 @@ namespace checkers
         private List<Move> m_MoveHistory;
         private int m_Points = 0;
         private ePlayer m_NumberPlayer;
-
-        public const int MAX_NAME_SIZE = 20;
+        
+        public Player(ePlayer i_NumberPlayer)
+        {
+            m_NumberPlayer = i_NumberPlayer;
+        }
 
         public string Name 
         {
@@ -21,14 +24,7 @@ namespace checkers
             }
             set
             {
-                if (value.Length <= MAX_NAME_SIZE)
-                {
-                    m_Name = value;
-                }
-                else
-                {
-                    throw new Exception("Name too long");
-                }
+                m_Name = value;
             }
         }
 

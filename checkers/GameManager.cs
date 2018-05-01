@@ -13,24 +13,44 @@ namespace checkers
     public enum eListOfMessages { } // all possible ui messages 
     public enum eSquareStatus { empty, outOfBounds, occupied}
 
-
-
-    class GameManager
+    public class GameManager
     {
         Board m_Board;
         Player m_Player1;
         Player m_Player2;
-        Move?[] m_MoveHistory;
+        Move?[] m_MoveHistory; // is it relevant?
         Player m_CurrentPlayer;
 
         public GameManager()
         {
-            // default constructor
+            // Default constructor
+            m_Player1 = new Player(ePlayer.BottomPlayer);
+            m_Player2 = new Player(ePlayer.TopPlayer);
         }
 
         public void Start()
         {
-            // the function that runs the entire game
+            // Runs several games with the same configuration
+
+            // User name
+            m_Player1.Name = CheckersConsolUI.GetUserNameInput();
+
+            // Board size
+            int boardSize = CheckersConsolUI.GetUserBoardSize();
+
+            // Choose human/computer opponent, if human, enter name
+            System.Console.WriteLine(CheckersConsolUI.GetPlayerType());
+
+            // Call PlayGame
+        }
+
+        public void PlayGame()
+        {
+            // Play a single game
+            // Draw the initialized board
+
+            // For human - write who's turn it is and get an input
+            // For computer - get a random move
         }
 
         private eMoveStatus checkMoveLegalality(Move i_Move)
@@ -43,6 +63,11 @@ namespace checkers
         {
             // returns a move for a specific player, from all possible moves 
             return new Move();
+        }
+
+        private bool isValidBoardSize(int i_Size)
+        {
+            return false;
         }
 
         private void changeActivePlayer()

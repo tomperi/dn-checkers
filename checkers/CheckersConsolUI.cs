@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 
 namespace checkers
@@ -11,6 +12,8 @@ namespace checkers
         public const string PLAYER_1_KING = "U";
         public const string PLAYER_2_REGULAR = "X";
         public const string PLAYER_2_KING = "K";
+
+        public const int MAX_NAME_SIZE = 20;
 
         public static void PrintBoard(Piece[,] board)
         {
@@ -102,11 +105,74 @@ namespace checkers
         {
             System.Console.Out.WriteLine("Please enter your name");
             string name = System.Console.In.ReadLine();
+
+            while(name.Length > MAX_NAME_SIZE)
+            {
+                System.Console.Out.WriteLine("Name should be less then " + MAX_NAME_SIZE + " characters.");
+                name = System.Console.In.ReadLine();
+            }
+
             return name;
+        }
+
+        public static int GetUserBoardSize()
+        {
+            // TODO: change this method to game manager or something and check from allowed board sizes (in Board class)
+            System.Console.Out.WriteLine("Choose a board size: 6, 8 or 10");
+            int size = 0;
+            bool validSize = false;
+            while(!validSize)
+            {
+                string userInput = System.Console.In.ReadLine();
+                if (!Int32.TryParse(userInput, out size))
+                {
+                    System.Console.WriteLine("Board size should be an integer!");
+                }
+                else if ((size != 6) && (size != 8) && (size != 10))
+                {
+                    System.Console.WriteLine("Board size should be 6, 8 or 10 only.");
+                }
+                else
+                {
+                    validSize = true;
+                }
+            }
+
+            return size;
+        }
+
+        public static ePlayerType GetPlayerType()
+        {
+            System.Console.Out.WriteLine("Choose a player - H/C (Human/Computer)");
+            string userInput = System.Console.In.ReadLine();
+            bool validPlayerType = false;
+            ePlayerType choosenPlayerType = ePlayerType.human;
+
+            while(!validPlayerType)
+            {
+                if ((userInput == "C") || (userInput == "c"))
+                {
+                    choosenPlayerType = ePlayerType.computer;
+                    validPlayerType = true;
+                }
+                else if ((userInput == "H") || (userInput == "h"))
+                {
+                    choosenPlayerType = ePlayerType.human;
+                    validPlayerType = true;
+                }
+                else
+                {
+                    System.Console.Out.WriteLine("Invalid player type. Enter H or C only");
+                    userInput = System.Console.In.ReadLine();
+                }
+            }
+
+            return choosenPlayerType;
         }
 
         public static Move GetUserMoveInput()
         {
+            // TODO: Allow a user to quit (doesn't return a move, should return something else)
             System.Console.Out.WriteLine("Please enter your move:");
             Move? move;
             while (!TryParseMove(System.Console.In.ReadLine(), out move))
@@ -136,21 +202,21 @@ namespace checkers
                 validSyntax = false;
             }
 
-            for (int i = 0; i < moveInteger.Length; i++)
+            for (int i = 0; i < moveString.Length; i++)
             {
                 if (!char.IsLetter(moveString[i]) && (moveString[i] != '>'))
                 {
                     validSyntax = false;
-                }
-                else
-                {
-                    moveInteger[i] = (int) moveString[i] - 'a';
                 }
             }
 
             // If all checks are valid, create new positions
             if (validSyntax)
             {
+                for(int i = 0; i < moveInteger.Length; i++)
+                {
+                    moveInteger[i] = (int)moveString[i] - 'a';
+                }
                 Position startPosition = new Position(moveInteger[0], moveInteger[1]);
                 Position endPosition = new Position(moveInteger[3], moveInteger[4]);
                 parsedMove = new Move(startPosition, endPosition);

@@ -4,7 +4,7 @@
     public enum ePieceType { regular, king }
     public enum ePieceSymbol { player1regular, player1king, player2regular, player2king }
 
-    class Piece
+    public class Piece
     {
         private ePlayer m_PlayerNumber;
         private ePieceType m_Type;

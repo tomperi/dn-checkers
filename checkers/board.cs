@@ -5,21 +5,27 @@ using System.Text;
 
 namespace checkers
 {
-    class Board
+    public class Board
     {
-        public Piece[,] m_Board; // CHANGE TO PRIVATE 
+        public Piece[,] m_Board; // TODO: CHANGE TO PRIVATE 
         private int m_Size;
+        private int m_TopPlayerPoints;
+        private int m_BottomPlayerPoints;
 
-        public Board() : this(eBoardSize.medium)
+        public static int[] ALLOWED_BOARD_SIZES = { 6, 8, 10 };
+
+        public Board() : this(8)
         {
         }
 
-        public Board(eBoardSize i_Size)
+        public Board(int i_Size)
         {
-            m_Size = (int) i_Size;
+            // Create a new board of specific size, init it with pieces
+            m_Size = i_Size;
             m_Board = new Piece[m_Size,m_Size];
+            m_TopPlayerPoints = 0; // TODO: Calculate the amount of points a player starts with
+            m_BottomPlayerPoints = 0;
             initBoard();
-            // create a new board of specific size, init it with pieces
         }
 
         private void initBoard()
@@ -55,6 +61,7 @@ namespace checkers
                 m_Board[i_Move.End.Row, i_Move.End.Col] = m_Board[i_Move.Begin.Row, i_Move.Begin.Col];
                 m_Board[i_Move.Begin.Row, i_Move.Begin.Col] = null;
                 o_MoveStatus = eMoveStatus.legal;
+                // If the move was a jump, need to remove the piece jumped over
                 checkKing(i_Move.End);
             }
             else
@@ -67,12 +74,14 @@ namespace checkers
         {
             Piece piece = m_Board[i_Position.Row, i_Position.Col];
 
-            if ((i_Position.Row == 0) && (piece.PlayerNumber == ePlayer.BottomPlayer))
+            if ((i_Position.Row == 0) && (piece.PlayerNumber == ePlayer.BottomPlayer) 
+                                      && (piece.Type == ePieceType.regular))
             {
                 piece.SetKing();
                 // maybe m_Board[i_Position.Row, i_Position.Col].setKing()?
             }
-            else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerNumber == ePlayer.TopPlayer))
+            else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerNumber == ePlayer.TopPlayer) 
+                                                      && (piece.Type == ePieceType.regular))
             {
                 piece.SetKing();
             }
@@ -80,6 +89,7 @@ namespace checkers
 
         private bool checkMoveLegality(Move i_Move, Move? i_PreviousMove)
         {
+            // TODO: also allow a player to quit
             List<Move> possibleMoves = GetPossibleMoves(i_Move.player, i_PreviousMove);
             bool legalMove = false;
             foreach(Move move in possibleMoves)
@@ -243,7 +253,7 @@ namespace checkers
 
         public Piece[,] GetBoard()
         {
-            // returns the board matrix
+            // Returns the board matrix
             return m_Board;
         }
 
