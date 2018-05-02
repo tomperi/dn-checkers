@@ -36,7 +36,7 @@ namespace checkers
             m_Player1.Name = CheckersConsolUI.GetUserNameInput();
 
             // Board size
-            int boardSize = CheckersConsolUI.GetUserBoardSize();
+            int boardSize = CheckersConsolUI.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
             m_Board = new Board(boardSize);
 
             // Choose human/computer opponent, if human, enter name
@@ -124,21 +124,10 @@ namespace checkers
             // For computer - get a random move
         }
 
-        private eMoveStatus checkMoveLegalality(Move i_Move)
-        {
-            // check if the move is legal
-            return eMoveStatus.Legal;
-        }
-
         private Move getRandomMove(Player i_Player)
         {
             // returns a move for a specific player, from all possible moves 
             return null;
-        }
-
-        private bool isValidBoardSize(int i_Size)
-        {
-            return false;
         }
 
         private void changeActivePlayer()

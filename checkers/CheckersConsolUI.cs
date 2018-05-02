@@ -115,12 +115,15 @@ namespace checkers
             return name;
         }
 
-        public static int GetUserBoardSize()
+        public static int GetUserBoardSize(int[] allowedBoardSizes)
         {
-            // TODO: change this method to game manager or something and check from allowed board sizes (in Board class)
-            System.Console.Out.WriteLine("Choose a board size: 6, 8 or 10");
+            StringBuilder inputRequest = new StringBuilder();
+            string allowedSizesString = intArrayToString(allowedBoardSizes);
+            inputRequest.AppendFormat("Choose a board size: {0}", allowedSizesString);
+
             int size = 0;
             bool validSize = false;
+
             while(!validSize)
             {
                 string userInput = System.Console.In.ReadLine();
@@ -130,7 +133,7 @@ namespace checkers
                 }
                 else if ((size != 6) && (size != 8) && (size != 10))
                 {
-                    System.Console.WriteLine("Board size can be 6, 8 or 10 only.");
+                    System.Console.WriteLine("Board size can be {0} only.", allowedSizesString);
                 }
                 else
                 {
@@ -139,6 +142,31 @@ namespace checkers
             }
 
             return size;
+        }
+
+        private static string intArrayToString(int[] array)
+        {
+            StringBuilder arrayString = new StringBuilder();
+            if ((array == null) || (array.Length == 0))
+            {
+                arrayString.Append("");
+            }
+            else if (array.Length == 1)
+            {
+                arrayString.Append(array[0]);
+            }
+            else
+            {
+                for (int i = 0; i < array.Length - 1; i++)
+                {
+                    arrayString.AppendFormat("{0}, ", array[i]);
+                }
+
+                arrayString.AppendFormat("or {0}", array[array.Length - 1]);
+            }
+            PrintMessage(arrayString);
+
+            return arrayString.ToString();
         }
 
         public static ePlayerType GetPlayerType()
@@ -232,6 +260,10 @@ namespace checkers
             // prints some message to the screen
         }
 
+        public static void PrintMessage(StringBuilder message)
+        {
+            System.Console.Out.WriteLine(message.ToString());
+        }
         public static void PrintListOfMoves(List<Move> i_ListofMoves)
         {
             StringBuilder listOfMoveStringBuilder = new StringBuilder();
