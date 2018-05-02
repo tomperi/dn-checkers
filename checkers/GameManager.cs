@@ -74,7 +74,7 @@ namespace checkers
 //                CheckersConsolUI.PrintListOfMoves(listOfPossibleMoves);
 
                 Move currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
-                m_Board.MovePiece(currentMove, m_CurrentPlayer.GetLastMove(), out eMoveStatus currentMoveStatus);
+                m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out eMoveStatus currentMoveStatus);
 
 
                 while (currentMoveStatus == eMoveStatus.illegal)
@@ -82,7 +82,7 @@ namespace checkers
                     // CheckersConsolUI.PrintMessage(); TODO: print move invalid
                     System.Console.Out.WriteLine("Invalid move, enter a new one:");
                     currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
-                    m_Board.MovePiece(currentMove, m_CurrentPlayer.GetLastMove(), out currentMoveStatus);
+                    m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out currentMoveStatus);
                 }
 
                 m_CurrentPlayer.AddMove(currentMove);

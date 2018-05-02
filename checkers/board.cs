@@ -55,12 +55,16 @@ namespace checkers
             }
         }
 
-        public void MovePiece(Move i_Move, Move i_PreviousMove, out eMoveStatus o_MoveStatus)
+        public void MovePiece(ref Move i_Move, Move i_PreviousMove, out eMoveStatus o_MoveStatus)
         {
-            if (checkMoveLegality(i_Move, i_PreviousMove))
+            if (checkMoveLegality(ref i_Move, i_PreviousMove))
             {
                 m_Board[i_Move.End.Row, i_Move.End.Col] = m_Board[i_Move.Begin.Row, i_Move.Begin.Col];
                 m_Board[i_Move.Begin.Row, i_Move.Begin.Col] = null;
+                if (i_Move.Type == eMoveType.jump)
+                {
+                    removedJumpedOverPiece(i_Move);
+                }
                 o_MoveStatus = eMoveStatus.legal;
                 // TODO: If the move was a jump, need to remove the piece jumped over
                 checkKing(i_Move.End);
@@ -69,6 +73,13 @@ namespace checkers
             {
                 o_MoveStatus = eMoveStatus.illegal;
             } 
+        }
+
+        private void removedJumpedOverPiece(Move i_Move)
+        {
+            int row = (i_Move.Begin.Row > i_Move.End.Row) ? i_Move.Begin.Row - 1 : i_Move.Begin.Row + 1;
+            int col = (i_Move.Begin.Col > i_Move.End.Col) ? i_Move.Begin.Col - 1 : i_Move.Begin.Col + 1;
+            m_Board[row, col] = null;
         }
 
         private void checkKing(Position i_Position)
@@ -88,7 +99,7 @@ namespace checkers
             }
         }
 
-        private bool checkMoveLegality(Move i_Move, Move i_PreviousMove)
+        private bool checkMoveLegality(ref Move i_Move, Move i_PreviousMove)
         {
             // TODO: also allow a player to quit
             List<Move> possibleMoves = GetPossibleMoves(i_Move.Player, i_PreviousMove);
@@ -96,8 +107,12 @@ namespace checkers
             foreach(Move move in possibleMoves)
             {
                 if ((move.Begin.Equals(i_Move.Begin)) && (move.End.Equals(i_Move.End)))
+                {
                     legalMove = true;
+                    i_Move.Type = move.Type;
+                }
             }
+                    
 
             return legalMove;
         }
@@ -196,7 +211,7 @@ namespace checkers
                     new Position(i_StartPosition.Row - 1, i_StartPosition.Col - 1),
                     new Position(i_StartPosition.Row - 1, i_StartPosition.Col + 1)
                 };
-            return checkRegularMoves(i_StartPosition, endPositions, i_Player);
+            return checkMove(i_StartPosition, endPositions, i_Player);
         }
 
         private List<Move> possibleMovesForPieceDown(Position i_StartPosition, ePlayerPosition i_Player)
@@ -206,10 +221,10 @@ namespace checkers
                     new Position(i_StartPosition.Row + 1, i_StartPosition.Col + 1),
                     new Position(i_StartPosition.Row + 1, i_StartPosition.Col - 1)
                 };
-            return checkRegularMoves(i_StartPosition, endPositions, i_Player);
+            return checkMove(i_StartPosition, endPositions, i_Player);
         }
 
-        private List<Move> checkRegularMoves(Position i_StartPosition, Position[] i_EndPositions, ePlayerPosition i_Player)
+        private List<Move> checkMove(Position i_StartPosition, Position[] i_EndPositions, ePlayerPosition i_Player)
         {
             List<Move> regularMovesList = new List<Move>();
 
