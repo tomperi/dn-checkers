@@ -97,7 +97,7 @@ namespace checkers
             }
             else
             {
-                m_TopPlayerPoints += numOfPoints;
+                m_TopPlayerPoints -= numOfPoints;
             }
 
 
