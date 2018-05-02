@@ -33,8 +33,8 @@ namespace checkers
         {
             // Initialized the board with the right amount of pieces
             // Leaves a null where there are no pieces
-            int player1Area = (m_Size / 2) - 2;
-            int player2Area = (m_Size / 2) + 1;
+            int topPlayerArea = (m_Size / 2) - 2;
+            int bottomPlayerArea = (m_Size / 2) + 1;
 
             for (int i = 0; i < m_Size; i++)
             {
@@ -42,14 +42,16 @@ namespace checkers
                 {
                     // Odd row -> Place a piece in the even columns
                     // Even row -> place a piece in the odd columns
-                    if ((i <= player1Area) && (((i % 2) + (j % 2)) == 1))
+                    if ((i <= topPlayerArea) && (((i % 2) + (j % 2)) == 1))
                     {
                         m_Board[i,j] = new Piece(ePlayerPosition.TopPlayer);
+                        m_TopPlayerPoints += 1;
                     }
 
-                    if ((i >= player2Area) && (((i % 2) + (j % 2)) == 1))
+                    if ((i >= bottomPlayerArea) && (((i % 2) + (j % 2)) == 1))
                     {
                         m_Board[i,j] = new Piece(ePlayerPosition.BottomPlayer);
+                        m_BottomPlayerPoints += 1;
                     }
                 }
             }
@@ -79,6 +81,17 @@ namespace checkers
         {
             int row = (i_Move.Begin.Row > i_Move.End.Row) ? i_Move.Begin.Row - 1 : i_Move.Begin.Row + 1;
             int col = (i_Move.Begin.Col > i_Move.End.Col) ? i_Move.Begin.Col - 1 : i_Move.Begin.Col + 1;
+            int numOfPoints = (m_Board[row, col].Type == ePieceType.regular) ? 1 : 3;
+            if (m_Board[row, col].PlayerPosition == ePlayerPosition.BottomPlayer)
+            {
+                m_BottomPlayerPoints -= numOfPoints;
+            }
+            else
+            {
+                m_TopPlayerPoints += numOfPoints;
+            }
+
+
             m_Board[row, col] = null;
         }
 
@@ -122,17 +135,16 @@ namespace checkers
             List<Move> possibleMoves = new List<Move>();
 
             // If the last move was a jump, first check if another jump is possible for that piece
+            // Todo: change the method so it has only one return
             if ((i_LastMove != null) && (i_LastMove.Type == eMoveType.jump))
             {
                 possibleMoves = PossibleMovesForPiece(i_LastMove.End);
-                foreach(Move currentMove in possibleMoves)
+                if (possibleMoves != null)
                 {
-                    if (currentMove.Type == eMoveType.regular)
-                        possibleMoves.Remove(currentMove);
+                    possibleMoves.RemoveAll(isJump);
+                    if (possibleMoves.Count > 0)
+                        return possibleMoves;
                 }
-
-                if (possibleMoves.Count > 0)
-                    return possibleMoves;
             }
 
             // Calculate all possible moves for a player
@@ -150,6 +162,11 @@ namespace checkers
                 possibleMoves = onlyJumps;
 
             return possibleMoves;
+        }
+
+        private static bool isJump(Move move)
+        {
+            return move.Type == eMoveType.jump ? true : false;
         }
 
         private bool isJumpPossible(List<Move> i_AllMovesList, out List<Move> o_OnlyJumps)
@@ -286,6 +303,21 @@ namespace checkers
             o_Winner = null;
             o_Points = 0;
             return eGameStatus.playing;
+        }
+
+        public int GetPlayerScore(Player player)
+        {
+            int points;
+            if (player.PlayerPosition == ePlayerPosition.BottomPlayer)
+            {
+                points = m_BottomPlayerPoints;
+            }
+            else
+            {
+                points = m_TopPlayerPoints;
+            }
+
+            return points; 
         }
     }
 }

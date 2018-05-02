@@ -93,10 +93,11 @@ namespace checkers
                 CheckersConsolUI.PrintMove(m_CurrentPlayer.GetLastMove());
                 // Switch player
                 changeActivePlayer();
-                System.Console.WriteLine("next move");
-                System.Console.ReadLine();
                 CheckersConsolUI.ClearScreen();
                 CheckersConsolUI.PrintBoard(m_Board.GetBoard());
+                System.Console.Out.WriteLine("{0} points: {1} -- {2} points: {3}", 
+                    m_Player1.Name, m_Board.GetPlayerScore(m_Player1), 
+                    m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
             }
 
 
