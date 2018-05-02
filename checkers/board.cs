@@ -147,6 +147,11 @@ namespace checkers
             return legalMove;
         }
 
+        public List<Move> GetPossibleMoves(ePlayerPosition i_CurrentPlayer)
+        {
+            return GetPossibleMoves(i_CurrentPlayer, null);
+        }
+
         public List<Move> GetPossibleMoves(ePlayerPosition i_CurrentPlayer, Move i_LastMove)
         {
             List<Move> possibleMoves = new List<Move>();
@@ -306,35 +311,53 @@ namespace checkers
             // Returns the board matrix
             return m_Board;
         }
-
-        public eGameStatus GetGameStatus()
-        {
-            // check the current game status, without returning the winner and points
-            return eGameStatus.playing;
-        }
-
-        public eGameStatus GetGameStatus(out Player o_Winner, out int o_Points)
+        
+        public eGameStatus GetGameStatus(out ePlayerPosition o_Winner, out int o_WinnerPoints, out int o_LoserPoints)
         {
             // check the current game status
             // if there is a win or a draw, return the winner and the amount of points he got
-            o_Winner = null;
-            o_Points = 0;
-            return eGameStatus.playing;
+            // Todo: a draw should only occur if the CURRENT PLAYER has no valid moves. Not both players. Add current player to the status checking
+
+            eGameStatus currentStatus = eGameStatus.playing;
+            ePlayerPosition winner = ePlayerPosition.BottomPlayer;
+            int winnerPoints = 0, loserPoints = 0;
+
+            int numberOfMovesPossibleForTopPlayer = GetPossibleMoves(ePlayerPosition.TopPlayer).Count;
+            int numberOfMovesPossibleForBottomPlayer = GetPossibleMoves(ePlayerPosition.BottomPlayer).Count;
+
+            // In case one of the players has no move, the game is either a draw or a win
+            if ((numberOfMovesPossibleForBottomPlayer == 0) || (numberOfMovesPossibleForTopPlayer == 0))
+            {
+                currentStatus = eGameStatus.draw;
+                if (numberOfMovesPossibleForBottomPlayer != 0)
+                {
+                    currentStatus = eGameStatus.win;
+                    winner = ePlayerPosition.BottomPlayer;
+                    winnerPoints = m_BottomPlayerPoints;
+                    loserPoints = m_TopPlayerPoints;
+                }
+
+                if (numberOfMovesPossibleForTopPlayer != 0)
+                {
+                    currentStatus = eGameStatus.win;
+                    winner = ePlayerPosition.BottomPlayer;
+                    winnerPoints = m_TopPlayerPoints;
+                    loserPoints = m_BottomPlayerPoints;
+                }
+            } 
+
+            o_Winner = winner;
+            o_WinnerPoints = winnerPoints;
+            o_LoserPoints = loserPoints;
+
+            return currentStatus;
         }
 
         public int GetPlayerScore(Player player)
         {
-            int points;
-            if (player.PlayerPosition == ePlayerPosition.BottomPlayer)
-            {
-                points = m_BottomPlayerPoints;
-            }
-            else
-            {
-                points = m_TopPlayerPoints;
-            }
-
-            return points; 
+            return player.PlayerPosition == ePlayerPosition.BottomPlayer
+                ? m_BottomPlayerPoints
+                : m_TopPlayerPoints;
         }
     }
 }

@@ -120,6 +120,7 @@ namespace checkers
             StringBuilder inputRequest = new StringBuilder();
             string allowedSizesString = intArrayToString(allowedBoardSizes);
             inputRequest.AppendFormat("Choose a board size: {0}", allowedSizesString);
+            PrintMessage(inputRequest);
 
             int size = 0;
             bool validSize = false;
@@ -164,7 +165,6 @@ namespace checkers
 
                 arrayString.AppendFormat("or {0}", array[array.Length - 1]);
             }
-            PrintMessage(arrayString);
 
             return arrayString.ToString();
         }
