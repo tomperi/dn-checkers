@@ -59,22 +59,31 @@ namespace checkers
 
         public void MovePiece(ref Move i_Move, Move i_PreviousMove, out eMoveStatus o_MoveStatus)
         {
+            o_MoveStatus = eMoveStatus.Illegal;
             if (checkMoveLegality(ref i_Move, i_PreviousMove))
             {
-                m_Board[i_Move.End.Row, i_Move.End.Col] = m_Board[i_Move.Begin.Row, i_Move.Begin.Col];
-                m_Board[i_Move.Begin.Row, i_Move.Begin.Col] = null;
+                o_MoveStatus = eMoveStatus.Legal;
+                changePiecePosition(i_Move);
                 if (i_Move.Type == eMoveType.jump)
                 {
                     removedJumpedOverPiece(i_Move);
+                    if (isJumpPossible(PossibleMovesForPiece(i_Move.End), out List<Move> jumpsList))
+                    {
+                        o_MoveStatus = eMoveStatus.AnotherJumpPossible;
+                    }
                 }
-                o_MoveStatus = eMoveStatus.legal;
-                // TODO: If the move was a jump, need to remove the piece jumped over
                 checkKing(i_Move.End);
             }
             else
             {
-                o_MoveStatus = eMoveStatus.illegal;
+                o_MoveStatus = eMoveStatus.Illegal;
             } 
+        }
+
+        private void changePiecePosition(Move i_Move)
+        {
+            m_Board[i_Move.End.Row, i_Move.End.Col] = m_Board[i_Move.Begin.Row, i_Move.Begin.Col];
+            m_Board[i_Move.Begin.Row, i_Move.Begin.Col] = null;
         }
 
         private void removedJumpedOverPiece(Move i_Move)
@@ -117,7 +126,7 @@ namespace checkers
             // TODO: also allow a player to quit
             List<Move> possibleMoves = GetPossibleMoves(i_Move.Player, i_PreviousMove);
             bool legalMove = false;
-            foreach(Move move in possibleMoves)
+            foreach (Move move in possibleMoves)
             {
                 if ((move.Begin.Equals(i_Move.Begin)) && (move.End.Equals(i_Move.End)))
                 {
@@ -126,7 +135,6 @@ namespace checkers
                 }
             }
                     
-
             return legalMove;
         }
 
@@ -141,7 +149,7 @@ namespace checkers
                 possibleMoves = PossibleMovesForPiece(i_LastMove.End);
                 if (possibleMoves != null)
                 {
-                    possibleMoves.RemoveAll(isJump);
+                    possibleMoves.RemoveAll(notJump);
                     if (possibleMoves.Count > 0)
                         return possibleMoves;
                 }
@@ -164,9 +172,9 @@ namespace checkers
             return possibleMoves;
         }
 
-        private static bool isJump(Move move)
+        private static bool notJump(Move move)
         {
-            return move.Type == eMoveType.jump ? true : false;
+            return move.Type == eMoveType.jump ? false : true;
         }
 
         private bool isJumpPossible(List<Move> i_AllMovesList, out List<Move> o_OnlyJumps)

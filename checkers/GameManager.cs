@@ -9,7 +9,7 @@ namespace checkers
     public enum eGameStatus { playing, win, draw }
     public enum ePlayerType { Human, Computer }
     public enum eMoveType { regular, jump }
-    public enum eMoveStatus { legal, illegal } // syntax error should be checked in the UI part
+    public enum eMoveStatus { Legal, Illegal, AnotherJumpPossible} // syntax error should be checked in the UI part
     public enum eListOfMessages { } // all possible ui messages 
     public enum eSquareStatus { empty, outOfBounds, occupied}
 
@@ -69,21 +69,33 @@ namespace checkers
 
             while (true)
             {
-//                List<Move> listOfPossibleMoves =
-//                    m_Board.GetPossibleMoves(m_CurrentPlayer.PlayerPosition, m_CurrentPlayer.GetLastMove());
-//                CheckersConsolUI.PrintListOfMoves(listOfPossibleMoves);
+                List<Move> listOfPossibleMoves =
+                    m_Board.GetPossibleMoves(m_CurrentPlayer.PlayerPosition, m_CurrentPlayer.GetLastMove());
+                CheckersConsolUI.PrintListOfMoves(listOfPossibleMoves);
 
                 Move currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
                 m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out eMoveStatus currentMoveStatus);
 
+                CheckersConsolUI.PrintBoard(m_Board.GetBoard());
 
-                while (currentMoveStatus == eMoveStatus.illegal)
+                while (currentMoveStatus == eMoveStatus.Illegal)
                 {
                     // CheckersConsolUI.PrintMessage(); TODO: print move invalid
                     System.Console.Out.WriteLine("Invalid move, enter a new one:");
                     currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
                     m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out currentMoveStatus);
+
+//                    while (currentMoveStatus == eMoveStatus.AnotherJumpPossible)
+//                    {
+//                        currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
+//                        m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out currentMoveStatus);
+//                    }
+                    
+                    List<Move> listOfPossibleMovesAgain =
+                        m_Board.GetPossibleMoves(m_CurrentPlayer.PlayerPosition, m_CurrentPlayer.GetLastMove());
+                    CheckersConsolUI.PrintListOfMoves(listOfPossibleMovesAgain);
                 }
+
 
                 m_CurrentPlayer.AddMove(currentMove);
 
@@ -91,11 +103,16 @@ namespace checkers
 
                 // Print the current players last move
                 CheckersConsolUI.PrintMove(m_CurrentPlayer.GetLastMove());
-                // Switch player
-                changeActivePlayer();
+
+                // If the player can not preform another jump, change player
+                if (currentMoveStatus != eMoveStatus.AnotherJumpPossible)
+                {
+                    changeActivePlayer();
+                }
+
                 CheckersConsolUI.ClearScreen();
                 CheckersConsolUI.PrintBoard(m_Board.GetBoard());
-                System.Console.Out.WriteLine("{0} points: {1} -- {2} points: {3}", 
+                System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}", 
                     m_Player1.Name, m_Board.GetPlayerScore(m_Player1), 
                     m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
             }
@@ -110,7 +127,7 @@ namespace checkers
         private eMoveStatus checkMoveLegalality(Move i_Move)
         {
             // check if the move is legal
-            return eMoveStatus.legal;
+            return eMoveStatus.Legal;
         }
 
         private Move getRandomMove(Player i_Player)
