@@ -7,10 +7,10 @@ namespace checkers
         // TODO: Change move from struct to class
         private Position m_Begin;
         private Position m_End;
-        private ePlayer? m_Player;
+        private ePlayerNumber? m_Player;
         private eMoveType? m_Type;
 
-        public Move(Position i_Begin, Position i_End, ePlayer i_Player)
+        public Move(Position i_Begin, Position i_End, ePlayerNumber i_Player)
         {
             // New move constructor
             m_Begin = i_Begin;
@@ -19,7 +19,7 @@ namespace checkers
             m_Type = null;
         }
 
-        public Move(Position i_Begin, Position i_End, ePlayer i_Player, eMoveType i_MoveType)
+        public Move(Position i_Begin, Position i_End, ePlayerNumber i_Player, eMoveType i_MoveType)
         {
             // New move constructor
             m_Begin = i_Begin;
@@ -52,7 +52,7 @@ namespace checkers
             }
         }
 
-        public ePlayer player
+        public ePlayerNumber player
         {
             get
             {

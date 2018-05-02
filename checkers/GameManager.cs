@@ -24,8 +24,9 @@ namespace checkers
         public GameManager()
         {
             // Default constructor
-            m_Player1 = new Player(ePlayer.BottomPlayer);
-            m_Player2 = new Player(ePlayer.TopPlayer);
+            m_Player1 = new Player(ePlayerNumber.BottomPlayer);
+            m_Player2 = new Player(ePlayerNumber.TopPlayer);
+            m_CurrentPlayer = m_Player1;
         }
 
         public void Start()
@@ -64,6 +65,7 @@ namespace checkers
         {
             // Play a single game
             // Draw the initialized board
+            CheckersConsolUI.ClearScreen();
             CheckersConsolUI.PrintBoard(m_Board.GetBoard());
 
             // For human - write who's turn it is and get an input

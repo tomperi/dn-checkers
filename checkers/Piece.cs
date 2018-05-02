@@ -1,15 +1,15 @@
 ﻿namespace checkers
 {
-    public enum ePlayer { TopPlayer, BottomPlayer }
+    public enum ePlayerNumber { TopPlayer, BottomPlayer }
     public enum ePieceType { regular, king }
     public enum ePieceSymbol { player1regular, player1king, player2regular, player2king }
 
     public class Piece
     {
-        private ePlayer m_PlayerNumber;
+        private ePlayerNumber m_PlayerNumber;
         private ePieceType m_Type;
 
-        public Piece(ePlayer i_PlayerNumber)
+        public Piece(ePlayerNumber i_PlayerNumber)
         {            
             // new piece constructor
             m_PlayerNumber = i_PlayerNumber;
@@ -24,7 +24,7 @@
             }
         }
 
-        public ePlayer PlayerNumber
+        public ePlayerNumber PlayerNumber
         {
             get
             {
@@ -41,10 +41,10 @@
         {
             get
             {
-                if (m_Type == ePieceType.regular && m_PlayerNumber == ePlayer.TopPlayer) return ePieceSymbol.player1regular;
-                if (m_Type == ePieceType.king && m_PlayerNumber == ePlayer.TopPlayer) return ePieceSymbol.player1king;
-                if (m_Type == ePieceType.regular && m_PlayerNumber == ePlayer.BottomPlayer) return ePieceSymbol.player2regular;
-                if (m_Type == ePieceType.king && m_PlayerNumber == ePlayer.BottomPlayer) return ePieceSymbol.player2king;
+                if (m_Type == ePieceType.regular && m_PlayerNumber == ePlayerNumber.TopPlayer) return ePieceSymbol.player1regular;
+                if (m_Type == ePieceType.king && m_PlayerNumber == ePlayerNumber.TopPlayer) return ePieceSymbol.player1king;
+                if (m_Type == ePieceType.regular && m_PlayerNumber == ePlayerNumber.BottomPlayer) return ePieceSymbol.player2regular;
+                if (m_Type == ePieceType.king && m_PlayerNumber == ePlayerNumber.BottomPlayer) return ePieceSymbol.player2king;
                 return ePieceSymbol.player1regular;
             }
         }

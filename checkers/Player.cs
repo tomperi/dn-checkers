@@ -9,11 +9,12 @@ namespace checkers
         private ePlayerType m_PlayerType;
         private List<Move> m_MoveHistory;
         private int m_Points = 0;
-        private ePlayer m_NumberPlayer;
+        private ePlayerNumber m_PlayerNumber;
         
-        public Player(ePlayer i_NumberPlayer)
+        public Player(ePlayerNumber i_PlayerNumber)
         {
-            m_NumberPlayer = i_NumberPlayer;
+            m_PlayerNumber = i_PlayerNumber;
+            m_MoveHistory = new List<Move>();
         }
 
         public string Name 
@@ -53,22 +54,24 @@ namespace checkers
             }
         }
 
-        public ePlayer PlayerNumber
+        public ePlayerNumber PlayerNumber
         {
             get
             {
-                return m_NumberPlayer;
+                return m_PlayerNumber;
             }
         }
 
-        protected void ClearMoveHistory()
+        public void ClearMoveHistory()
         {
             // clears the move history, in order to start a new game
+            m_MoveHistory = new List<Move>();
         }
 
-        protected void AddMove()
+        protected void AddMove(Move i_Move)
         {
-            // add a move to the players move history
+            // Add a move to the players move history
+            m_MoveHistory.Add(i_Move);
         }
 
         public Move GetLastMove()
