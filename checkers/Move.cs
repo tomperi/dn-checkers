@@ -2,15 +2,15 @@
 
 namespace checkers
 {
-    public struct Move
+    public class Move
     {
         // TODO: Change move from struct to class
         private Position m_Begin;
         private Position m_End;
-        private ePlayerNumber? m_Player;
+        private ePlayerPosition? m_Player;
         private eMoveType? m_Type;
 
-        public Move(Position i_Begin, Position i_End, ePlayerNumber i_Player)
+        public Move(Position i_Begin, Position i_End, ePlayerPosition i_Player)
         {
             // New move constructor
             m_Begin = i_Begin;
@@ -19,7 +19,7 @@ namespace checkers
             m_Type = null;
         }
 
-        public Move(Position i_Begin, Position i_End, ePlayerNumber i_Player, eMoveType i_MoveType)
+        public Move(Position i_Begin, Position i_End, ePlayerPosition i_Player, eMoveType i_MoveType)
         {
             // New move constructor
             m_Begin = i_Begin;
@@ -33,7 +33,7 @@ namespace checkers
             m_Begin = i_Begin;
             m_End = i_End;
             m_Player = null;
-            m_Type = null;
+            m_Type = eMoveType.regular;
         }
 
         public Position Begin
@@ -52,18 +52,16 @@ namespace checkers
             }
         }
 
-        public ePlayerNumber player
+        public ePlayerPosition Player
         {
             get
             {
-                if (m_Player != null)
-                {
-                    return m_Player.Value;
-                }
-                else
-                {
-                    throw new Exception("No value for you");
-                }
+                return m_Player.Value;
+            }
+            set
+            {
+                m_Player = value;
+
             }
         }
 
@@ -71,14 +69,7 @@ namespace checkers
         {
             get
             {
-                if (m_Type != null)
-                {
-                    return m_Type.Value;
-                }
-                else
-                {
-                    throw new Exception("No value for you");
-                }
+                return m_Type.Value;
             }
             set
             {

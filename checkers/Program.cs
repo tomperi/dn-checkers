@@ -30,21 +30,21 @@ namespace checkers
 //
 //            // Create a new instance of GameManager and run the game
 //            Board board = new Board();
-//            board.m_Board[3, 4] = new Piece(ePlayerNumber.BottomPlayer);
+//            board.m_Board[3, 4] = new Piece(ePlayerPosition.BottomPlayer);
 //            board.m_Board[3, 4].SetKing();
 //
 //
-////            board.m_Board[4, 1] = new Piece(ePlayerNumber.TopPlayer);
+////            board.m_Board[4, 1] = new Piece(ePlayerPosition.TopPlayer);
 ////            board.m_Board[4, 1].SetKing();
 //
 //            CheckersConsolUI.PrintBoard(board.GetBoard());
 //
-//            List<Move> possibleMoves = board.GetPossibleMoves(ePlayerNumber.TopPlayer, null);
+//            List<Move> possibleMoves = board.GetPossibleMoves(ePlayerPosition.TopPlayer, null);
 //
 //            System.Console.Out.WriteLine("Possible moves for top player");
 //            CheckersConsolUI.PrintListOfMoves(possibleMoves);
 //
-//            possibleMoves = board.GetPossibleMoves(ePlayerNumber.BottomPlayer, null);
+//            possibleMoves = board.GetPossibleMoves(ePlayerPosition.BottomPlayer, null);
 //
 //            System.Console.Out.WriteLine("Possible moves for bottom player");
 //            CheckersConsolUI.PrintListOfMoves(possibleMoves);
@@ -52,7 +52,7 @@ namespace checkers
 //            // MOVE A "X" PIECE
 //            Position startPosition = new Position(5,6);
 //            Position endposiPosition = new Position(4,7);
-//            Move newMove = new Move(startPosition, endposiPosition, ePlayerNumber.BottomPlayer);
+//            Move newMove = new Move(startPosition, endposiPosition, ePlayerPosition.BottomPlayer);
 //
 //            board.MovePiece(newMove, null, out eMoveStatus moveStatus);
 //            System.Console.Out.WriteLine(moveStatus);
@@ -60,12 +60,12 @@ namespace checkers
 //            // REPRINT BOARD AND CALCULATE MOVES
 //            CheckersConsolUI.PrintBoard(board.GetBoard());
 //
-//            possibleMoves = board.GetPossibleMoves(ePlayerNumber.TopPlayer, null);
+//            possibleMoves = board.GetPossibleMoves(ePlayerPosition.TopPlayer, null);
 //
 //            System.Console.Out.WriteLine("Possible moves for top player");
 //            CheckersConsolUI.PrintListOfMoves(possibleMoves);
 //
-//            possibleMoves = board.GetPossibleMoves(ePlayerNumber.BottomPlayer, null);
+//            possibleMoves = board.GetPossibleMoves(ePlayerPosition.BottomPlayer, null);
 //
 //            System.Console.Out.WriteLine("Possible moves for bottom player");
 //            CheckersConsolUI.PrintListOfMoves(possibleMoves);

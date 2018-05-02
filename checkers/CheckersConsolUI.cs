@@ -103,7 +103,7 @@ namespace checkers
 
         public static string GetUserNameInput()
         {
-            System.Console.Out.WriteLine("Who's the first player?");
+            System.Console.Out.WriteLine("Enter the player name:");
             string name = System.Console.In.ReadLine();
 
             while(name.Length > MAX_NAME_SIZE)
@@ -170,17 +170,19 @@ namespace checkers
             return choosenPlayerType;
         }
 
-        public static Move GetUserMoveInput()
+        public static Move GetUserMoveInput(Player player)
         {
             // TODO: Allow a user to quit (doesn't return a move, should return something else)
-            System.Console.Out.WriteLine("Please enter your move:");
-            Move? move;
+            System.Console.Out.Write("{0}'s turn (SYMBOL): ", player.Name);
+            Move move;
             while (!TryParseMove(System.Console.In.ReadLine(), out move))
             {
                 System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
             }
 
-            return move.Value;
+            move.Player = player.PlayerPosition; 
+
+            return move;
         }    
 
         public static void ClearScreen()
@@ -188,7 +190,7 @@ namespace checkers
             Ex02.ConsoleUtils.Screen.Clear();
         }
 
-        public static bool TryParseMove(string i_UserInput, out Move? parsedMove)
+        public static bool TryParseMove(string i_UserInput, out Move parsedMove)
         {
             // Gets a user input, if valid returns it as 2 positions
             bool validSyntax = true;
@@ -245,6 +247,8 @@ namespace checkers
         public static void PrintMove(Move i_Move)
         {
             // Print a move in the format ROWcol>ROWCOL
+            if (i_Move == null) return;
+
             StringBuilder moveStringBuilder = new StringBuilder();
 
             char startRow = (char) ('A' + i_Move.Begin.Row);

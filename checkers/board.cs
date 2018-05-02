@@ -44,25 +44,25 @@ namespace checkers
                     // Even row -> place a piece in the odd columns
                     if ((i <= player1Area) && (((i % 2) + (j % 2)) == 1))
                     {
-                        m_Board[i,j] = new Piece(ePlayerNumber.TopPlayer);
+                        m_Board[i,j] = new Piece(ePlayerPosition.TopPlayer);
                     }
 
                     if ((i >= player2Area) && (((i % 2) + (j % 2)) == 1))
                     {
-                        m_Board[i,j] = new Piece(ePlayerNumber.BottomPlayer);
+                        m_Board[i,j] = new Piece(ePlayerPosition.BottomPlayer);
                     }
                 }
             }
         }
 
-        public void MovePiece(Move i_Move, Move? i_PreviousMove, out eMoveStatus o_MoveStatus)
+        public void MovePiece(Move i_Move, Move i_PreviousMove, out eMoveStatus o_MoveStatus)
         {
             if (checkMoveLegality(i_Move, i_PreviousMove))
             {
                 m_Board[i_Move.End.Row, i_Move.End.Col] = m_Board[i_Move.Begin.Row, i_Move.Begin.Col];
                 m_Board[i_Move.Begin.Row, i_Move.Begin.Col] = null;
                 o_MoveStatus = eMoveStatus.legal;
-                // If the move was a jump, need to remove the piece jumped over
+                // TODO: If the move was a jump, need to remove the piece jumped over
                 checkKing(i_Move.End);
             }
             else
@@ -75,23 +75,23 @@ namespace checkers
         {
             Piece piece = m_Board[i_Position.Row, i_Position.Col];
 
-            if ((i_Position.Row == 0) && (piece.PlayerNumber == ePlayerNumber.BottomPlayer) 
+            if ((i_Position.Row == 0) && (piece.PlayerPosition == ePlayerPosition.BottomPlayer) 
                                       && (piece.Type == ePieceType.regular))
             {
                 piece.SetKing();
                 // maybe m_Board[i_Position.Row, i_Position.Col].setKing()?
             }
-            else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerNumber == ePlayerNumber.TopPlayer) 
+            else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerPosition == ePlayerPosition.TopPlayer) 
                                                       && (piece.Type == ePieceType.regular))
             {
                 piece.SetKing();
             }
         }
 
-        private bool checkMoveLegality(Move i_Move, Move? i_PreviousMove)
+        private bool checkMoveLegality(Move i_Move, Move i_PreviousMove)
         {
             // TODO: also allow a player to quit
-            List<Move> possibleMoves = GetPossibleMoves(i_Move.player, i_PreviousMove);
+            List<Move> possibleMoves = GetPossibleMoves(i_Move.Player, i_PreviousMove);
             bool legalMove = false;
             foreach(Move move in possibleMoves)
             {
@@ -102,14 +102,14 @@ namespace checkers
             return legalMove;
         }
 
-        public List<Move> GetPossibleMoves(ePlayerNumber i_CurrentPlayer, Move? i_LastMove)
+        public List<Move> GetPossibleMoves(ePlayerPosition i_CurrentPlayer, Move i_LastMove)
         {
             List<Move> possibleMoves = new List<Move>();
 
             // If the last move was a jump, first check if another jump is possible for that piece
-            if ((i_LastMove != null) && (i_LastMove.Value.Type == eMoveType.jump))
+            if ((i_LastMove != null) && (i_LastMove.Type == eMoveType.jump))
             {
-                possibleMoves = PossibleMovesForPiece(i_LastMove.Value.End);
+                possibleMoves = PossibleMovesForPiece(i_LastMove.End);
                 foreach(Move currentMove in possibleMoves)
                 {
                     if (currentMove.Type == eMoveType.regular)
@@ -126,7 +126,7 @@ namespace checkers
                 for (int j = 0; j < m_Size; j++)
                 {
                     // If the piece belongs to the current player, check the possible moves for it
-                    if ((m_Board[i,j] != null) && (m_Board[i,j].PlayerNumber == i_CurrentPlayer))
+                    if ((m_Board[i,j] != null) && (m_Board[i,j].PlayerPosition == i_CurrentPlayer))
                         possibleMoves.AddRange(PossibleMovesForPiece(new Position(i,j)));
                 }
             }
@@ -164,7 +164,7 @@ namespace checkers
 
             if (currentPiece == null) return possibleMovesForPiece;
 
-            ePlayerNumber player = currentPiece.PlayerNumber;
+            ePlayerPosition player = currentPiece.PlayerPosition;
 
             // If the piece is a king, check moves in all directions
             if (currentPiece.Type == ePieceType.king)
@@ -175,12 +175,12 @@ namespace checkers
             else
             {
                 // If the piece is a regular, check moves according to the player 
-                if (currentPiece.PlayerNumber == ePlayerNumber.TopPlayer)
+                if (currentPiece.PlayerPosition == ePlayerPosition.TopPlayer)
                 {
                     possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition,player));
                 }
 
-                if(currentPiece.PlayerNumber == ePlayerNumber.BottomPlayer)
+                if(currentPiece.PlayerPosition == ePlayerPosition.BottomPlayer)
                 {
                     possibleMovesForPiece.AddRange(possibleMovesForPieceUp(i_PiecePosition, player));
                 }
@@ -189,7 +189,7 @@ namespace checkers
             return possibleMovesForPiece;
         }
 
-        private List<Move> possibleMovesForPieceUp(Position i_StartPosition, ePlayerNumber i_Player)
+        private List<Move> possibleMovesForPieceUp(Position i_StartPosition, ePlayerPosition i_Player)
         {            
             Position[] endPositions =
                 {
@@ -199,7 +199,7 @@ namespace checkers
             return checkRegularMoves(i_StartPosition, endPositions, i_Player);
         }
 
-        private List<Move> possibleMovesForPieceDown(Position i_StartPosition, ePlayerNumber i_Player)
+        private List<Move> possibleMovesForPieceDown(Position i_StartPosition, ePlayerPosition i_Player)
         {
             Position[] endPositions =
                 {
@@ -209,13 +209,13 @@ namespace checkers
             return checkRegularMoves(i_StartPosition, endPositions, i_Player);
         }
 
-        private List<Move> checkRegularMoves(Position i_StartPosition, Position[] i_EndPositions, ePlayerNumber i_Player)
+        private List<Move> checkRegularMoves(Position i_StartPosition, Position[] i_EndPositions, ePlayerPosition i_Player)
         {
             List<Move> regularMovesList = new List<Move>();
 
             foreach(Position endPosition in i_EndPositions)
             {
-                eSquareStatus squareStatus = checkSquareStatus(endPosition, out ePlayerNumber squarePlayer);
+                eSquareStatus squareStatus = checkSquareStatus(endPosition, out ePlayerPosition squarePlayer);
                 if (squareStatus == eSquareStatus.empty)
                     regularMovesList.Add(new Move(i_StartPosition, endPosition, i_Player, eMoveType.regular));
                 else if ((squareStatus == eSquareStatus.occupied) && (squarePlayer != i_Player))
@@ -232,10 +232,10 @@ namespace checkers
             return regularMovesList;
         }
 
-        private eSquareStatus checkSquareStatus(Position i_Square, out ePlayerNumber o_Player)
+        private eSquareStatus checkSquareStatus(Position i_Square, out ePlayerPosition o_Player)
         {
             eSquareStatus squareStatus;
-            o_Player = ePlayerNumber.BottomPlayer;
+            o_Player = ePlayerPosition.BottomPlayer;
             if ((i_Square.Row >= m_Size) || (i_Square.Row < 0) || (i_Square.Col >= m_Size) || (i_Square.Col < 0))
             {
                 squareStatus = eSquareStatus.outOfBounds;
@@ -247,7 +247,7 @@ namespace checkers
             else
             {
                 squareStatus = eSquareStatus.occupied;
-                o_Player = m_Board[i_Square.Row, i_Square.Col].PlayerNumber;
+                o_Player = m_Board[i_Square.Row, i_Square.Col].PlayerPosition;
             }                
             return squareStatus;
         }
@@ -258,13 +258,13 @@ namespace checkers
             return m_Board;
         }
 
-        protected eGameStatus GetGameStatus()
+        public eGameStatus GetGameStatus()
         {
             // check the current game status, without returning the winner and points
             return eGameStatus.playing;
         }
 
-        protected eGameStatus GetGameStatus(out Player o_Winner, out int o_Points)
+        public eGameStatus GetGameStatus(out Player o_Winner, out int o_Points)
         {
             // check the current game status
             // if there is a win or a draw, return the winner and the amount of points he got
