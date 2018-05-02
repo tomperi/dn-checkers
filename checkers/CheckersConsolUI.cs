@@ -103,12 +103,12 @@ namespace checkers
 
         public static string GetUserNameInput()
         {
-            System.Console.Out.WriteLine("Please enter your name");
+            System.Console.Out.WriteLine("Who's the first player?");
             string name = System.Console.In.ReadLine();
 
             while(name.Length > MAX_NAME_SIZE)
             {
-                System.Console.Out.WriteLine("Name should be less then " + MAX_NAME_SIZE + " characters.");
+                System.Console.Out.WriteLine("A name should be less then " + MAX_NAME_SIZE + " characters.");
                 name = System.Console.In.ReadLine();
             }
 
@@ -126,11 +126,11 @@ namespace checkers
                 string userInput = System.Console.In.ReadLine();
                 if (!Int32.TryParse(userInput, out size))
                 {
-                    System.Console.WriteLine("Board size should be an integer!");
+                    System.Console.WriteLine("Board size can only be an integer!");
                 }
                 else if ((size != 6) && (size != 8) && (size != 10))
                 {
-                    System.Console.WriteLine("Board size should be 6, 8 or 10 only.");
+                    System.Console.WriteLine("Board size can be 6, 8 or 10 only.");
                 }
                 else
                 {
@@ -146,18 +146,18 @@ namespace checkers
             System.Console.Out.WriteLine("Choose a player - H/C (Human/Computer)");
             string userInput = System.Console.In.ReadLine();
             bool validPlayerType = false;
-            ePlayerType choosenPlayerType = ePlayerType.human;
+            ePlayerType choosenPlayerType = ePlayerType.Human;
 
             while(!validPlayerType)
             {
                 if ((userInput == "C") || (userInput == "c"))
                 {
-                    choosenPlayerType = ePlayerType.computer;
+                    choosenPlayerType = ePlayerType.Computer;
                     validPlayerType = true;
                 }
                 else if ((userInput == "H") || (userInput == "h"))
                 {
-                    choosenPlayerType = ePlayerType.human;
+                    choosenPlayerType = ePlayerType.Human;
                     validPlayerType = true;
                 }
                 else

@@ -20,18 +20,19 @@ namespace checkers
 
         public Board(int i_Size)
         {
-            // Create a new board of specific size, init it with pieces
+            // Create a new board of specific size, init it with pieces 
+            // TODO: Check if the board size is legit here also?
             m_Size = i_Size;
             m_Board = new Piece[m_Size,m_Size];
             m_TopPlayerPoints = 0; // TODO: Calculate the amount of points a player starts with
             m_BottomPlayerPoints = 0;
             initBoard();
         }
-
+        
         private void initBoard()
         {
-            // initialized the board with the right amount of pieces
-            // init null where there are no objects
+            // Initialized the board with the right amount of pieces
+            // Leaves a null where there are no pieces
             int player1Area = (m_Size / 2) - 2;
             int player2Area = (m_Size / 2) + 1;
 
