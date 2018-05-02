@@ -13,6 +13,8 @@ namespace checkers
         private int m_BottomPlayerPoints;
 
         public static int[] ALLOWED_BOARD_SIZES = { 6, 8, 10 };
+        public static int kingPointsWorth = 4;
+        public static int regularPointsWorth = 1;
 
         public Board() : this(8)
         {
@@ -45,13 +47,13 @@ namespace checkers
                     if ((i <= topPlayerArea) && (((i % 2) + (j % 2)) == 1))
                     {
                         m_Board[i,j] = new Piece(ePlayerPosition.TopPlayer);
-                        m_TopPlayerPoints += 1;
+                        m_TopPlayerPoints += regularPointsWorth;
                     }
 
                     if ((i >= bottomPlayerArea) && (((i % 2) + (j % 2)) == 1))
                     {
                         m_Board[i,j] = new Piece(ePlayerPosition.BottomPlayer);
-                        m_BottomPlayerPoints += 1;
+                        m_BottomPlayerPoints += regularPointsWorth;
                     }
                 }
             }
@@ -90,18 +92,24 @@ namespace checkers
         {
             int row = (i_Move.Begin.Row > i_Move.End.Row) ? i_Move.Begin.Row - 1 : i_Move.Begin.Row + 1;
             int col = (i_Move.Begin.Col > i_Move.End.Col) ? i_Move.Begin.Col - 1 : i_Move.Begin.Col + 1;
-            int numOfPoints = (m_Board[row, col].Type == ePieceType.regular) ? 1 : 3;
-            if (m_Board[row, col].PlayerPosition == ePlayerPosition.BottomPlayer)
+
+            int numOfPoints = (m_Board[row, col].Type == ePieceType.regular) ? regularPointsWorth : kingPointsWorth;
+            changePoints(m_Board[row, col].PlayerPosition, -numOfPoints);
+
+            m_Board[row, col] = null;
+        }
+
+        private void changePoints(ePlayerPosition i_Player, int numOfPoints)
+        {
+            if (i_Player == ePlayerPosition.BottomPlayer)
             {
-                m_BottomPlayerPoints -= numOfPoints;
+                m_BottomPlayerPoints += numOfPoints;
             }
             else
             {
-                m_TopPlayerPoints -= numOfPoints;
+                m_TopPlayerPoints += numOfPoints;
             }
 
-
-            m_Board[row, col] = null;
         }
 
         private void checkKing(Position i_Position)
@@ -112,12 +120,13 @@ namespace checkers
                                       && (piece.Type == ePieceType.regular))
             {
                 piece.SetKing();
-                // maybe m_Board[i_Position.Row, i_Position.Col].setKing()?
+                changePoints(ePlayerPosition.BottomPlayer, kingPointsWorth - regularPointsWorth);
             }
             else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerPosition == ePlayerPosition.TopPlayer) 
                                                       && (piece.Type == ePieceType.regular))
             {
                 piece.SetKing();
+                changePoints(ePlayerPosition.TopPlayer, kingPointsWorth - regularPointsWorth);
             }
         }
 
