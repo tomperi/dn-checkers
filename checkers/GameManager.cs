@@ -3,7 +3,6 @@ using System.Text;
 
 namespace checkers
 {
-    // Todo: Clear all irrelevant "using"
     // Todo: Order all relevant enums
     // Todo: Style all the code
     // Todo: check if there are multiple return statements in the same method and remove it
@@ -62,6 +61,8 @@ namespace checkers
         Player m_Player1;
         Player m_Player2;
 
+        private CheckersConsolUI m_Ui = new CheckersConsolUI();
+
         public GameManager()
         {
             // Default constructor
@@ -75,15 +76,15 @@ namespace checkers
             // Runs several games with the same configuration
 
             // User name
-            m_Player1.Name = CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE);
+            m_Player1.Name = m_Ui.GetUserNameInput(MAX_NAME_SIZE);
 
             // Board size
-            m_BoardSize = CheckersConsolUI.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
+            m_BoardSize = m_Ui.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
 
             // Choose human/computer opponent, if human, enter name
-            m_Player2.PlayerType = CheckersConsolUI.GetPlayerType();
+            m_Player2.PlayerType = m_Ui.GetPlayerType();
             m_Player2.Name = m_Player2.PlayerType == ePlayerType.Human
-                                 ? CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE)
+                                 ? m_Ui.GetUserNameInput(MAX_NAME_SIZE)
                                  : "Computer";
 
             // Call playSingleGame
@@ -92,7 +93,7 @@ namespace checkers
             while (continuePlaying)
             {
                 playSingleGame();
-                continuePlaying = CheckersConsolUI.GetUserAnotherGameInput();
+                continuePlaying = m_Ui.GetUserAnotherGameInput();
             }
 
             Console.Out.WriteLine("Thank you for playing, hope you enjoyed!");
@@ -104,19 +105,19 @@ namespace checkers
             // This method allows the user to play a single game
 
             // Initialize a new board and print it
-            CheckersConsolUI.ClearScreen();
+            m_Ui.ClearScreen();
             m_Board = new Board(m_BoardSize);
             eGameStatus gameStatus = eGameStatus.playing;
             ePlayerPosition winner = ePlayerPosition.BottomPlayer;
             m_CurrentPlayer = m_Player1;
             Move previousMove = null;
 
-            CheckersConsolUI.PrintScoreBoard(
+            m_Ui.PrintScoreBoard(
                 m_Player1.Name,
                 m_Board.GetPlayerScore(m_Player1),
                 m_Player2.Name,
                 m_Board.GetPlayerScore(m_Player2));
-            CheckersConsolUI.PrintBoard(m_Board.GetBoard());
+                m_Ui.PrintBoard(m_Board.GetBoard());
 
             while (gameStatus == eGameStatus.playing)
             {
@@ -124,14 +125,14 @@ namespace checkers
                 Move currentMove = GetMove(previousMove, out eMoveStatus currentMoveStatus);
                 m_CurrentPlayer.AddMove(currentMove);
 
-                CheckersConsolUI.ClearScreen();
-                CheckersConsolUI.PrintScoreBoard(
+                m_Ui.ClearScreen();
+                m_Ui.PrintScoreBoard(
                     m_Player1.Name,
                     m_Board.GetPlayerScore(m_Player1),
                     m_Player2.Name,
                     m_Board.GetPlayerScore(m_Player2));
-                CheckersConsolUI.PrintBoard(m_Board.GetBoard());
-                CheckersConsolUI.PrintLastMove(m_CurrentPlayer);
+                    m_Ui.PrintBoard(m_Board.GetBoard());
+                    m_Ui.PrintLastMove(m_CurrentPlayer);
 
                 // If the player can not preform another jump, change player
                 if (currentMoveStatus == eMoveStatus.AnotherJumpPossible)
@@ -191,13 +192,13 @@ namespace checkers
             {
                 while (currentMoveStatus == eMoveStatus.Illegal)
                 {
-                    currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer, out bool forfitFlag);
+                    currentMove = m_Ui.GetUserMoveInput(m_CurrentPlayer, out bool forfitFlag);
                     if (forfitFlag)
                     {
                         m_Board.PlayerForfit(m_CurrentPlayer, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            CheckersConsolUI.PrintMessage(
+                            m_Ui.PrintMessage(
                                 new StringBuilder("You're not allowed to forfit when you're on the lead"));
                         }
                     }
@@ -206,7 +207,7 @@ namespace checkers
                         m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            CheckersConsolUI.PrintMessage(new StringBuilder("Invalid move, enter a new one:"));
+                            m_Ui.PrintMessage(new StringBuilder("Invalid move, enter a new one:"));
                         }
                     }
                 }

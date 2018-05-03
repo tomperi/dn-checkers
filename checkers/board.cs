@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 
 namespace checkers
 {
     public class Board
     {
-        public Piece[,] m_Board; 
-        private int m_Size;
-        private int m_TopPlayerPoints;
-        private int m_BottomPlayerPoints;
-        private bool m_PlayerHasForfit = false;
-        private ePlayerPosition m_PlayerForfit;
-
         public static int[] ALLOWED_BOARD_SIZES = { 6, 8, 10 };
-        public static int kingPointsWorth = 4;
-        public static int regularPointsWorth = 1;
+        private static readonly int kingPointsWorth = 4;
+        private static readonly int regularPointsWorth = 1;
+        private readonly int m_Size;
 
-        public Board() : this(8)
+        public Piece[,] m_Board;
+        private int m_BottomPlayerPoints;
+        private ePlayerPosition m_PlayerForfit;
+        private bool m_PlayerHasForfit;
+        private int m_TopPlayerPoints;
+
+        public Board()
+            : this(8)
         {
         }
 
@@ -26,12 +25,17 @@ namespace checkers
         {
             // Create a new board of specific size, init it with pieces 
             m_Size = i_Size;
-            m_Board = new Piece[m_Size,m_Size];
-            m_TopPlayerPoints = 0; 
+            m_Board = new Piece[m_Size, m_Size];
+            m_TopPlayerPoints = 0;
             m_BottomPlayerPoints = 0;
             initBoard();
         }
-        
+
+        private static bool notJump(Move move)
+        {
+            return move.Type == eMoveType.jump ? false : true;
+        }
+
         private void initBoard()
         {
             // Initialized the board with the right amount of pieces
@@ -45,15 +49,15 @@ namespace checkers
                 {
                     // Odd row -> Place a piece in the even columns
                     // Even row -> place a piece in the odd columns
-                    if ((i <= topPlayerArea) && (((i % 2) + (j % 2)) == 1))
+                    if (i <= topPlayerArea && (i % 2) + (j % 2) == 1)
                     {
-                        m_Board[i,j] = new Piece(ePlayerPosition.TopPlayer);
+                        m_Board[i, j] = new Piece(ePlayerPosition.TopPlayer);
                         m_TopPlayerPoints += regularPointsWorth;
                     }
 
-                    if ((i >= bottomPlayerArea) && (((i % 2) + (j % 2)) == 1))
+                    if (i >= bottomPlayerArea && (i % 2) + (j % 2) == 1)
                     {
-                        m_Board[i,j] = new Piece(ePlayerPosition.BottomPlayer);
+                        m_Board[i, j] = new Piece(ePlayerPosition.BottomPlayer);
                         m_BottomPlayerPoints += regularPointsWorth;
                     }
                 }
@@ -80,7 +84,7 @@ namespace checkers
             else
             {
                 o_MoveStatus = eMoveStatus.Illegal;
-            } 
+            }
         }
 
         private void changePiecePosition(Move i_Move)
@@ -91,10 +95,10 @@ namespace checkers
 
         private void removedJumpedOverPiece(Move i_Move)
         {
-            int row = (i_Move.Begin.Row > i_Move.End.Row) ? i_Move.Begin.Row - 1 : i_Move.Begin.Row + 1;
-            int col = (i_Move.Begin.Col > i_Move.End.Col) ? i_Move.Begin.Col - 1 : i_Move.Begin.Col + 1;
+            int row = i_Move.Begin.Row > i_Move.End.Row ? i_Move.Begin.Row - 1 : i_Move.Begin.Row + 1;
+            int col = i_Move.Begin.Col > i_Move.End.Col ? i_Move.Begin.Col - 1 : i_Move.Begin.Col + 1;
 
-            int numOfPoints = (m_Board[row, col].Type == ePieceType.regular) ? regularPointsWorth : kingPointsWorth;
+            int numOfPoints = m_Board[row, col].Type == ePieceType.regular ? regularPointsWorth : kingPointsWorth;
             changePoints(m_Board[row, col].PlayerPosition, -numOfPoints);
 
             m_Board[row, col] = null;
@@ -110,21 +114,20 @@ namespace checkers
             {
                 m_TopPlayerPoints += numOfPoints;
             }
-
         }
 
         private void checkKing(Position i_Position)
         {
             Piece piece = m_Board[i_Position.Row, i_Position.Col];
 
-            if ((i_Position.Row == 0) && (piece.PlayerPosition == ePlayerPosition.BottomPlayer) 
-                                      && (piece.Type == ePieceType.regular))
+            if (i_Position.Row == 0 && piece.PlayerPosition == ePlayerPosition.BottomPlayer
+                                    && piece.Type == ePieceType.regular)
             {
                 piece.SetKing();
                 changePoints(ePlayerPosition.BottomPlayer, kingPointsWorth - regularPointsWorth);
             }
-            else if ((i_Position.Row == (m_Size - 1)) && (piece.PlayerPosition == ePlayerPosition.TopPlayer) 
-                                                      && (piece.Type == ePieceType.regular))
+            else if (i_Position.Row == m_Size - 1 && piece.PlayerPosition == ePlayerPosition.TopPlayer
+                                                  && piece.Type == ePieceType.regular)
             {
                 piece.SetKing();
                 changePoints(ePlayerPosition.TopPlayer, kingPointsWorth - regularPointsWorth);
@@ -137,13 +140,13 @@ namespace checkers
             bool legalMove = false;
             foreach (Move move in possibleMoves)
             {
-                if ((move.Begin.Equals(i_Move.Begin)) && (move.End.Equals(i_Move.End)))
+                if (move.Begin.Equals(i_Move.Begin) && move.End.Equals(i_Move.End))
                 {
                     legalMove = true;
                     i_Move.Type = move.Type;
                 }
             }
-                    
+
             return legalMove;
         }
 
@@ -158,14 +161,16 @@ namespace checkers
             bool multipleJumpsPossible = false;
 
             // If the last move was a jump, first check if another jump is possible for that piece
-            if ((i_LastMove != null) && (i_LastMove.Type == eMoveType.jump))
+            if (i_LastMove != null && i_LastMove.Type == eMoveType.jump)
             {
                 possibleMoves = PossibleMovesForPiece(i_LastMove.End);
                 if (possibleMoves != null)
                 {
                     possibleMoves.RemoveAll(notJump);
                     if (possibleMoves.Count > 0)
+                    {
                         multipleJumpsPossible = true;
+                    }
                 }
             }
 
@@ -177,21 +182,20 @@ namespace checkers
                     for (int j = 0; j < m_Size; j++)
                     {
                         // If the piece belongs to the current player, check the possible moves for it
-                        if ((m_Board[i, j] != null) && (m_Board[i, j].PlayerPosition == i_CurrentPlayer))
+                        if (m_Board[i, j] != null && m_Board[i, j].PlayerPosition == i_CurrentPlayer)
+                        {
                             possibleMoves.AddRange(PossibleMovesForPiece(new Position(i, j)));
+                        }
                     }
                 }
 
                 if (isJumpPossible(possibleMoves, out List<Move> onlyJumps))
+                {
                     possibleMoves = onlyJumps;
+                }
             }
 
             return possibleMoves;
-        }
-
-        private static bool notJump(Move move)
-        {
-            return move.Type == eMoveType.jump ? false : true;
         }
 
         private bool isJumpPossible(List<Move> i_AllMovesList, out List<Move> o_OnlyJumps)
@@ -199,7 +203,7 @@ namespace checkers
             bool jumpPossible = false;
             o_OnlyJumps = new List<Move>(i_AllMovesList);
 
-            foreach(Move move in i_AllMovesList)
+            foreach (Move move in i_AllMovesList)
             {
                 if (move.Type == eMoveType.jump)
                 {
@@ -219,7 +223,10 @@ namespace checkers
             Piece currentPiece = m_Board[i_PiecePosition.Row, i_PiecePosition.Col];
             List<Move> possibleMovesForPiece = new List<Move>();
 
-            if (currentPiece == null) return possibleMovesForPiece;
+            if (currentPiece == null)
+            {
+                return possibleMovesForPiece;
+            }
 
             ePlayerPosition player = currentPiece.PlayerPosition;
 
@@ -234,10 +241,10 @@ namespace checkers
                 // If the piece is a regular, check moves according to the player 
                 if (currentPiece.PlayerPosition == ePlayerPosition.TopPlayer)
                 {
-                    possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition,player));
+                    possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition, player));
                 }
 
-                if(currentPiece.PlayerPosition == ePlayerPosition.BottomPlayer)
+                if (currentPiece.PlayerPosition == ePlayerPosition.BottomPlayer)
                 {
                     possibleMovesForPiece.AddRange(possibleMovesForPieceUp(i_PiecePosition, player));
                 }
@@ -247,7 +254,7 @@ namespace checkers
         }
 
         private List<Move> possibleMovesForPieceUp(Position i_StartPosition, ePlayerPosition i_Player)
-        {            
+        {
             Position[] endPositions =
                 {
                     new Position(i_StartPosition.Row - 1, i_StartPosition.Col - 1),
@@ -270,19 +277,23 @@ namespace checkers
         {
             List<Move> regularMovesList = new List<Move>();
 
-            foreach(Position endPosition in i_EndPositions)
+            foreach (Position endPosition in i_EndPositions)
             {
                 eSquareStatus squareStatus = checkSquareStatus(endPosition, out ePlayerPosition squarePlayer);
                 if (squareStatus == eSquareStatus.empty)
-                    regularMovesList.Add(new Move(i_StartPosition, endPosition, i_Player, eMoveType.regular));
-                else if ((squareStatus == eSquareStatus.occupied) && (squarePlayer != i_Player))
                 {
-                    int jumpRow = i_StartPosition.Row + 2 * (endPosition.Row - i_StartPosition.Row);
-                    int jumpCol = i_StartPosition.Col + 2 * (endPosition.Col - i_StartPosition.Col);
+                    regularMovesList.Add(new Move(i_StartPosition, endPosition, i_Player, eMoveType.regular));
+                }
+                else if (squareStatus == eSquareStatus.occupied && squarePlayer != i_Player)
+                {
+                    int jumpRow = i_StartPosition.Row + (2 * (endPosition.Row - i_StartPosition.Row));
+                    int jumpCol = i_StartPosition.Col + (2 * (endPosition.Col - i_StartPosition.Col));
                     Position jumpPosition = new Position(jumpRow, jumpCol);
                     eSquareStatus jumpSquareStatus = checkSquareStatus(jumpPosition, out squarePlayer);
                     if (jumpSquareStatus == eSquareStatus.empty)
+                    {
                         regularMovesList.Add(new Move(i_StartPosition, jumpPosition, i_Player, eMoveType.jump));
+                    }
                 }
             }
 
@@ -293,7 +304,7 @@ namespace checkers
         {
             eSquareStatus squareStatus;
             o_Player = ePlayerPosition.BottomPlayer;
-            if ((i_Square.Row >= m_Size) || (i_Square.Row < 0) || (i_Square.Col >= m_Size) || (i_Square.Col < 0))
+            if (i_Square.Row >= m_Size || i_Square.Row < 0 || i_Square.Col >= m_Size || i_Square.Col < 0)
             {
                 squareStatus = eSquareStatus.outOfBounds;
             }
@@ -305,7 +316,8 @@ namespace checkers
             {
                 squareStatus = eSquareStatus.occupied;
                 o_Player = m_Board[i_Square.Row, i_Square.Col].PlayerPosition;
-            }                
+            }
+
             return squareStatus;
         }
 
@@ -314,37 +326,35 @@ namespace checkers
             // Returns the board matrix
             return m_Board;
         }
-        
+
         public eGameStatus GetGameStatus(Player i_CurrentPlayer, out ePlayerPosition o_Winner)
         {
             // Check the current game status
             // Win -> The current player has no possible moves, the other player wins
             //        The current player has no pieces left, the other player wins
             // Draw -> Both players have no possible moves
-
             eGameStatus currentStatus = eGameStatus.playing;
             ePlayerPosition winner = ePlayerPosition.TopPlayer;
 
             if (m_PlayerHasForfit)
             {
                 winner = m_PlayerForfit == ePlayerPosition.TopPlayer
-                    ? ePlayerPosition.BottomPlayer
-                    : ePlayerPosition.TopPlayer;
+                             ? ePlayerPosition.BottomPlayer
+                             : ePlayerPosition.TopPlayer;
                 currentStatus = eGameStatus.forfit;
             }
             else
             {
                 ePlayerPosition currentPlayer = i_CurrentPlayer.PlayerPosition;
-                ePlayerPosition otherPlayer = (currentPlayer == ePlayerPosition.BottomPlayer)
-                    ? ePlayerPosition.TopPlayer
-                    : ePlayerPosition.BottomPlayer;
+                ePlayerPosition otherPlayer = currentPlayer == ePlayerPosition.BottomPlayer
+                                                  ? ePlayerPosition.TopPlayer
+                                                  : ePlayerPosition.BottomPlayer;
 
                 int currentPlayerPossibleMoves = GetPossibleMoves(currentPlayer).Count;
                 int otherPlayerPossibleMoves = GetPossibleMoves(otherPlayer).Count;
 
-
                 // In case one of the players has no move, the game is either a draw or a win
-                if ((currentPlayerPossibleMoves == 0) || (otherPlayerPossibleMoves == 0))
+                if (currentPlayerPossibleMoves == 0 || otherPlayerPossibleMoves == 0)
                 {
                     currentStatus = eGameStatus.draw;
                     if (otherPlayerPossibleMoves != 0)
@@ -354,7 +364,7 @@ namespace checkers
                     }
                 }
             }
-            
+
             o_Winner = winner;
 
             return currentStatus;
@@ -371,19 +381,17 @@ namespace checkers
 
         public int GetPlayerScore(Player player)
         {
-            return player.PlayerPosition == ePlayerPosition.BottomPlayer
-                ? m_BottomPlayerPoints
-                : m_TopPlayerPoints;
+            return player.PlayerPosition == ePlayerPosition.BottomPlayer ? m_BottomPlayerPoints : m_TopPlayerPoints;
         }
 
         public void PlayerForfit(Player i_PlayerForfit, out eMoveStatus i_CurrentMoveStatus)
         {
-            int forfitPlayerPoints = (i_PlayerForfit.PlayerPosition == ePlayerPosition.BottomPlayer)
-                ? m_BottomPlayerPoints
-                : m_TopPlayerPoints;
-            int otherPlayerPoints = (i_PlayerForfit.PlayerPosition == ePlayerPosition.BottomPlayer)
-                ? m_TopPlayerPoints
-                : m_BottomPlayerPoints;
+            int forfitPlayerPoints = i_PlayerForfit.PlayerPosition == ePlayerPosition.BottomPlayer
+                                         ? m_BottomPlayerPoints
+                                         : m_TopPlayerPoints;
+            int otherPlayerPoints = i_PlayerForfit.PlayerPosition == ePlayerPosition.BottomPlayer
+                                        ? m_TopPlayerPoints
+                                        : m_BottomPlayerPoints;
             if (forfitPlayerPoints <= otherPlayerPoints)
             {
                 i_CurrentMoveStatus = eMoveStatus.Legal;
@@ -394,7 +402,6 @@ namespace checkers
             {
                 i_CurrentMoveStatus = eMoveStatus.Illegal;
             }
-                
         }
     }
 }
