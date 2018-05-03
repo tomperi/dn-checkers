@@ -4,7 +4,13 @@ using System.Text;
 
 namespace checkers
 {
-    // add e_ to all enums
+    // Todo: Clear all irrelevant "using"
+    // Todo: Change ROWcol to COLrow in the input and output 
+    // Todo: Create GetRandomMove(ePlayerType) method in the Board class 
+    // Todo: Order all relevant enums
+    // Todo: Allow playing multiple games (count points)
+    // Todo: Display relevant message on game end (who won / draw)
+    // Todo: Style all the code
     public enum eBoardSize { small = 6, medium = 8, large = 10}
     public enum eGameStatus { playing, win, draw }
     public enum ePlayerType { Human, Computer }
