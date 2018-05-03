@@ -8,6 +8,7 @@ namespace checkers
     // Todo: Order all relevant enums
     // Todo: Style all the code
     // Todo: check if there are multiple return statements in the same method and remove it
+    // Todo: Update all methods/variables privacy level
     public enum eBoardSize { small = 6, medium = 8, large = 10}
     public enum eGameStatus { playing, win, draw, forfit}
     public enum ePlayerType { Human, Computer }

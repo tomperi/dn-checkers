@@ -7,7 +7,7 @@ namespace checkers
 {
     public class Board
     {
-        public Piece[,] m_Board; // TODO: CHANGE TO PRIVATE 
+        public Piece[,] m_Board; 
         private int m_Size;
         private int m_TopPlayerPoints;
         private int m_BottomPlayerPoints;
@@ -133,7 +133,6 @@ namespace checkers
 
         private bool checkMoveLegality(ref Move i_Move, Move i_PreviousMove)
         {
-            // TODO: also allow a player to quit
             List<Move> possibleMoves = GetPossibleMoves(i_Move.Player, i_PreviousMove);
             bool legalMove = false;
             foreach (Move move in possibleMoves)
