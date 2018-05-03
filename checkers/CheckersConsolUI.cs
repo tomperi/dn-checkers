@@ -101,7 +101,7 @@ namespace checkers
 
         public static string GetUserNameInput(int i_MaxNameSize)
         {
-            System.Console.Out.WriteLine("Enter the i_Player name:");
+            System.Console.Out.WriteLine("Enter the player name:");
             string name = System.Console.In.ReadLine();
 
             while(name.Length > i_MaxNameSize)
@@ -169,7 +169,7 @@ namespace checkers
 
         public static ePlayerType GetPlayerType()
         {
-            System.Console.Out.WriteLine("Choose a i_Player - H/C (Human/Computer)");
+            System.Console.Out.WriteLine("Choose a player - H/C (Human/Computer)");
             string userInput = System.Console.In.ReadLine();
             bool validPlayerType = false;
             ePlayerType choosenPlayerType = ePlayerType.Human;
@@ -196,7 +196,7 @@ namespace checkers
             return choosenPlayerType;
         }
 
-        public static Move GetUserMoveInput(Player i_Player, bool i_InvalidLastPlayerMove, out bool o_quit)
+        public static Move GetUserMoveInput(Player i_Player, out bool o_quit)
         {
             
             // TODO: Allow a user to quit (doesn't return a move, should return something else)
@@ -210,13 +210,16 @@ namespace checkers
                 userInput = System.Console.In.ReadLine();
                 validQuit = TryParseQuit(userInput);
      
-
                 if (!validQuit)
                 {
                     validMove = TryParseMove(userInput, out move);
-                    move.Player = i_Player.PlayerPosition;
                 }
                 System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
+            }
+
+            if (validMove)
+            {
+                move.Player = i_Player.PlayerPosition;
             }
 
             o_quit = validQuit;
@@ -226,7 +229,7 @@ namespace checkers
 
         private static bool TryParseQuit(string i_UserInput)
         {
-            return true;
+            return false;
         }
 
         public static void ClearScreen()

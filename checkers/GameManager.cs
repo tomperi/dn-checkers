@@ -18,7 +18,7 @@ namespace checkers
     public enum eMoveStatus { Legal, Illegal, AnotherJumpPossible} // syntax error should be checked in the UI part
     public enum eListOfMessages { } // all possible ui messages 
     public enum eSquareStatus { empty, outOfBounds, occupied}
-
+    
     public class GameManager
     {
         Board m_Board;
@@ -26,6 +26,8 @@ namespace checkers
         Player m_Player2;
         Player m_CurrentPlayer;
         private int m_BoardSize;
+
+        private const int MAX_NAME_SIZE = 20;
 
         public GameManager()
         {
@@ -40,7 +42,7 @@ namespace checkers
             // Runs several games with the same configuration
 
             // User name
-            m_Player1.Name = CheckersConsolUI.GetUserNameInput();
+            m_Player1.Name = CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE);
 
             // Board size
             m_BoardSize = CheckersConsolUI.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
@@ -49,7 +51,7 @@ namespace checkers
             m_Player2.PlayerType = CheckersConsolUI.GetPlayerType();
             if (m_Player2.PlayerType == ePlayerType.Human)
             {
-                m_Player2.Name = CheckersConsolUI.GetUserNameInput();
+                m_Player2.Name = CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE);
             }
             else
             {
@@ -137,14 +139,14 @@ namespace checkers
             eMoveStatus currentMoveStatus;
             if (m_CurrentPlayer.PlayerType == ePlayerType.Human)
             {
-                currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
+                currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer, out bool flag);
                 m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
 
                 while (currentMoveStatus == eMoveStatus.Illegal)
                 {
                     // Todo: put this method in the CheckersConsolUI. Idea: add a flag to GetUserMoveInput that says the move was invalid
                     System.Console.Out.WriteLine("Invalid move, enter a new one:");
-                    currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
+                    currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer, out bool flagflag);
                     m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
                 }
             }
