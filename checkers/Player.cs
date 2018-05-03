@@ -1,39 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace checkers
 {
     public class Player
     {
-        private string m_Name;
-        private ePlayerType m_PlayerType;
         private List<Move> m_MoveHistory;
-        private int m_Points = 0;
+        private string m_Name;
         private ePlayerPosition m_PlayerPosition;
-        
+        private ePlayerType m_PlayerType;
+        private int m_Points = 0;
+
         public Player(ePlayerPosition i_PlayerPosition)
         {
             m_PlayerPosition = i_PlayerPosition;
             m_MoveHistory = new List<Move>();
         }
 
-        public string Name 
+        public string Name
         {
             get
             {
                 return m_Name;
             }
+
             set
             {
                 m_Name = value;
             }
         }
 
-        public int Points 
+        public int Points
         {
             get
             {
-                return m_Points; 
+                return m_Points;
             }
 
             set
@@ -44,10 +44,11 @@ namespace checkers
 
         public ePlayerType PlayerType
         {
-            get 
+            get
             {
                 return m_PlayerType;
             }
+
             set
             {
                 m_PlayerType = value;

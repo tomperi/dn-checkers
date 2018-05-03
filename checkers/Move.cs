@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace checkers
+﻿namespace checkers
 {
     public class Move
     {
@@ -39,7 +37,7 @@ namespace checkers
         {
             get
             {
-                return m_Begin; 
+                return m_Begin;
             }
         }
 
@@ -57,10 +55,10 @@ namespace checkers
             {
                 return m_Player.Value;
             }
+
             set
             {
                 m_Player = value;
-
             }
         }
 
@@ -70,6 +68,7 @@ namespace checkers
             {
                 return m_Type.Value;
             }
+
             set
             {
                 m_Type = value;

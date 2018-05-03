@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 
 namespace checkers
 {
-
-    class CheckersConsolUI
+    public class CheckersConsolUI
     {
         public const char PLAYER_1_REGULAR = 'O';
         public const char PLAYER_1_KING = 'U';
@@ -35,9 +33,12 @@ namespace checkers
 
             for (int i = 0; i < dimension; i++)
             {
-                for(int j = 0; j < dimension; j++)
+                for (int j = 0; j < dimension; j++)
                 {
-                    if (j == 0) boardStringBuilder.Append(currentLabel + "|");
+                    if (j == 0)
+                    {
+                        boardStringBuilder.Append(currentLabel + "|");
+                    }
 
                     char currentPieceSymbol = ' ';
 
@@ -54,8 +55,8 @@ namespace checkers
             }
 
             // Print the StringBuilders 
-            System.Console.Out.Write(headerStringBuilder.ToString());
-            System.Console.Out.Write(boardStringBuilder.ToString());
+            Console.Out.Write(headerStringBuilder.ToString());
+            Console.Out.Write(boardStringBuilder.ToString());
         }
 
         private static char getPieceSymbol(Piece i_Piece)
@@ -85,7 +86,7 @@ namespace checkers
         private static string createLineSeperator(int i_BoardSize)
         {
             StringBuilder lineSeperator = new StringBuilder();
-            lineSeperator.Append(System.Environment.NewLine);
+            lineSeperator.Append(Environment.NewLine);
 
             int lineLength = (i_BoardSize * 4) + 2;
 
@@ -94,20 +95,20 @@ namespace checkers
                 lineSeperator.Append("=");
             }
 
-            lineSeperator.Append(System.Environment.NewLine);
+            lineSeperator.Append(Environment.NewLine);
 
             return lineSeperator.ToString();
         }
 
         public static string GetUserNameInput(int i_MaxNameSize)
         {
-            System.Console.Out.WriteLine("Enter the player name:");
-            string name = System.Console.In.ReadLine();
+            Console.Out.WriteLine("Enter the player name:");
+            string name = Console.In.ReadLine();
 
-            while(name.Length > i_MaxNameSize)
+            while (name.Length > i_MaxNameSize)
             {
-                System.Console.Out.WriteLine("A name should be less then " + i_MaxNameSize + " characters.");
-                name = System.Console.In.ReadLine();
+                Console.Out.WriteLine("A name should be less then " + i_MaxNameSize + " characters.");
+                name = Console.In.ReadLine();
             }
 
             return name;
@@ -123,16 +124,16 @@ namespace checkers
             int size = 0;
             bool validSize = false;
 
-            while(!validSize)
+            while (!validSize)
             {
-                string userInput = System.Console.In.ReadLine();
-                if (!Int32.TryParse(userInput, out size))
+                string userInput = Console.In.ReadLine();
+                if (!int.TryParse(userInput, out size))
                 {
-                    System.Console.WriteLine("Board size can only be an integer!");
+                    Console.WriteLine("Board size can only be an integer!");
                 }
                 else if ((size != 6) && (size != 8) && (size != 10))
                 {
-                    System.Console.WriteLine("Board size can be {0} only.", allowedSizesString);
+                    Console.WriteLine("Board size can be {0} only.", allowedSizesString);
                 }
                 else
                 {
@@ -148,7 +149,7 @@ namespace checkers
             StringBuilder arrayString = new StringBuilder();
             if ((i_Array == null) || (i_Array.Length == 0))
             {
-                arrayString.Append("");
+                arrayString.Append(string.Empty);
             }
             else if (i_Array.Length == 1)
             {
@@ -169,12 +170,12 @@ namespace checkers
 
         public static ePlayerType GetPlayerType()
         {
-            System.Console.Out.WriteLine("Choose a player - H/C (Human/Computer)");
-            string userInput = System.Console.In.ReadLine();
+            Console.Out.WriteLine("Choose a player - H/C (Human/Computer)");
+            string userInput = Console.In.ReadLine();
             bool validPlayerType = false;
             ePlayerType choosenPlayerType = ePlayerType.Human;
 
-            while(!validPlayerType)
+            while (!validPlayerType)
             {
                 if ((userInput == "C") || (userInput == "c"))
                 {
@@ -188,8 +189,8 @@ namespace checkers
                 }
                 else
                 {
-                    System.Console.Out.WriteLine("Invalid i_Player type. Enter H or C only");
-                    userInput = System.Console.In.ReadLine();
+                    Console.Out.WriteLine("Invalid i_Player type. Enter H or C only");
+                    userInput = Console.In.ReadLine();
                 }
             }
 
@@ -198,15 +199,15 @@ namespace checkers
 
         public static Move GetUserMoveInput(Player i_Player, out bool o_Quit)
         {
-            System.Console.Out.Write("{0}'s turn ({1}): ", i_Player.Name, getPlayerSymbol(i_Player));
+            Console.Out.Write("{0}'s turn ({1}): ", i_Player.Name, getPlayerSymbol(i_Player));
             Move move = null;
             bool validMove = false, validQuit = false;
 
             while (!(validMove || validQuit))
             {
-                string userInput = System.Console.In.ReadLine().ToLower();
+                string userInput = Console.In.ReadLine().ToLower();
                 validQuit = TryParseQuit(userInput);
-     
+
                 if (!validQuit)
                 {
                     validMove = TryParseMove(userInput, out move);
@@ -214,7 +215,7 @@ namespace checkers
 
                 if (!validMove && !validQuit)
                 {
-                    System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
+                    Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
                 }
             }
 
@@ -238,22 +239,23 @@ namespace checkers
             bool validInput = false;
             bool anotherGame = false;
 
-            System.Console.Out.WriteLine("Would you like to play another game? Y/n");
+            Console.Out.WriteLine("Would you like to play another game? Y/n");
             while (!validInput)
             {
-                string userInput = System.Console.In.ReadLine().ToLower();
+                string userInput = Console.In.ReadLine().ToLower();
                 if (userInput == "y" || userInput == "yes")
                 {
                     validInput = true;
                     anotherGame = true;
-                } else if ((userInput == "n") || (userInput == "no"))
+                }
+                else if ((userInput == "n") || (userInput == "no"))
                 {
                     validInput = true;
                     anotherGame = false;
                 }
                 else
                 {
-                    System.Console.Out.WriteLine("Invalid input. Write Y/n only");
+                    Console.Out.WriteLine("Invalid input. Write Y/n only");
                 }
             }
 
@@ -270,7 +272,7 @@ namespace checkers
             // Gets a user input, if valid returns it as 2 positions
             bool validSyntax = true;
             string moveString = i_UserInput.ToLower();
-            int[] moveInteger = new int[5]; 
+            int[] moveInteger = new int[5];
             o_ParsedMove = null;
 
             // A move should have 5 letters only, with '>' in the middle
@@ -290,10 +292,11 @@ namespace checkers
             // If all checks are valid, create new positions
             if (validSyntax)
             {
-                for(int i = 0; i < moveInteger.Length; i++)
+                for (int i = 0; i < moveInteger.Length; i++)
                 {
                     moveInteger[i] = (int)moveString[i] - 'a';
                 }
+
                 Position startPosition = new Position(moveInteger[1], moveInteger[0]);
                 Position endPosition = new Position(moveInteger[4], moveInteger[3]);
                 o_ParsedMove = new Move(startPosition, endPosition);
@@ -309,44 +312,50 @@ namespace checkers
 
         public static void PrintMessage(StringBuilder i_Message)
         {
-            System.Console.Out.WriteLine(i_Message.ToString());
+            Console.Out.WriteLine(i_Message.ToString());
         }
 
         public static void PrintListOfMoves(List<Move> i_ListofMoves)
         {
             StringBuilder listOfMoveStringBuilder = new StringBuilder();
-            foreach(Move move in i_ListofMoves)
+            foreach (Move move in i_ListofMoves)
             {
                 listOfMoveStringBuilder.Append(move.ToString());
-                listOfMoveStringBuilder.Append(System.Environment.NewLine);
+                listOfMoveStringBuilder.Append(Environment.NewLine);
             }
 
-            System.Console.Out.Write(listOfMoveStringBuilder);
+            Console.Out.Write(listOfMoveStringBuilder);
         }
 
         public static string PrintMove(Move i_Move)
         {
             // Print a move in the format COLrow>COLrow
-            if (i_Move == null) return "";
+            if (i_Move == null)
+            {
+                return string.Empty;
+            }
 
             StringBuilder moveStringBuilder = new StringBuilder();
 
             char startCol = (char)('A' + i_Move.Begin.Col);
-            char startRow = (char) ('a' + i_Move.Begin.Row);
-            moveStringBuilder.Append(startCol + "" + startRow + ">");
+            char startRow = (char)('a' + i_Move.Begin.Row);
+            moveStringBuilder.Append(startCol + string.Empty + startRow + ">");
 
             char endCol = (char)('A' + i_Move.End.Col);
-            char endRow = (char) ('a' + i_Move.End.Row);
-            moveStringBuilder.Append(endCol + "" + endRow);
+            char endRow = (char)('a' + i_Move.End.Row);
+            moveStringBuilder.Append(endCol + string.Empty + endRow);
 
-            return (moveStringBuilder.ToString());
+            return moveStringBuilder.ToString();
         }
 
         public static void PrintScoreBoard(string player1Name, int player1Points, string player2Name, int player2Points)
         {
-
-            System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}", 
-                player1Name, player1Points, player2Name, player2Points);
+            Console.Out.WriteLine(
+                "{0}'s points: {1} -- {2}'s points: {3}",
+                player1Name,
+                player1Points,
+                player2Name,
+                player2Points);
         }
 
         public static void PrintLastMove(Player i_Player)
@@ -354,13 +363,18 @@ namespace checkers
             char symbol = getPlayerSymbol(i_Player);
             Move lastMove = i_Player.GetLastMove();
             if (lastMove != null)
-                System.Console.Out.WriteLine("{0}'s move was ({1}): {2}", 
-                    i_Player.Name, getPlayerSymbol(i_Player), PrintMove(lastMove));
+            {
+                Console.Out.WriteLine(
+                    "{0}'s move was ({1}): {2}",
+                    i_Player.Name,
+                    getPlayerSymbol(i_Player),
+                    PrintMove(lastMove));
+            }
         }
 
         public static char getPlayerSymbol(Player i_Player)
         {
-            return (int) i_Player.PlayerPosition == 1 ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
+            return (int)i_Player.PlayerPosition == 1 ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
         }
     }
 }

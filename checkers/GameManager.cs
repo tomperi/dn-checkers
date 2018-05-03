@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace checkers
@@ -9,23 +8,59 @@ namespace checkers
     // Todo: Style all the code
     // Todo: check if there are multiple return statements in the same method and remove it
     // Todo: Update all methods/variables privacy level
-    public enum eBoardSize { small = 6, medium = 8, large = 10}
-    public enum eGameStatus { playing, win, draw, forfit}
-    public enum ePlayerType { Human, Computer }
-    public enum eMoveType { regular, jump }
-    public enum eMoveStatus { Legal, Illegal, AnotherJumpPossible} // syntax error should be checked in the UI part
-    public enum eListOfMessages { } // all possible ui messages 
-    public enum eSquareStatus { empty, outOfBounds, occupied}
-    
+    public enum eBoardSize
+    {
+        small = 6,
+        medium = 8,
+        large = 10
+    }
+
+    public enum eGameStatus
+    {
+        playing,
+        win,
+        draw,
+        forfit
+    }
+
+    public enum ePlayerType
+    {
+        Human,
+        Computer
+    }
+
+    public enum eMoveType
+    {
+        regular,
+        jump
+    }
+
+    public enum eMoveStatus
+    {
+        Legal,
+        Illegal,
+        AnotherJumpPossible
+    } // syntax error should be checked in the UI part
+
+    public enum eListOfMessages
+    {
+    } // all possible ui messages 
+
+    public enum eSquareStatus
+    {
+        empty,
+        outOfBounds,
+        occupied
+    }
+
     public class GameManager
     {
+        private const int MAX_NAME_SIZE = 20;
         Board m_Board;
+        private int m_BoardSize;
+        Player m_CurrentPlayer;
         Player m_Player1;
         Player m_Player2;
-        Player m_CurrentPlayer;
-        private int m_BoardSize;
-
-        private const int MAX_NAME_SIZE = 20;
 
         public GameManager()
         {
@@ -47,10 +82,10 @@ namespace checkers
 
             // Choose human/computer opponent, if human, enter name
             m_Player2.PlayerType = CheckersConsolUI.GetPlayerType();
-            m_Player2.Name = m_Player2.PlayerType == ePlayerType.Human ? 
-                CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE) : 
-                "Computer";
-            
+            m_Player2.Name = m_Player2.PlayerType == ePlayerType.Human
+                                 ? CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE)
+                                 : "Computer";
+
             // Call playSingleGame
             bool continuePlaying = true;
 
@@ -60,9 +95,8 @@ namespace checkers
                 continuePlaying = CheckersConsolUI.GetUserAnotherGameInput();
             }
 
-            System.Console.Out.WriteLine("Thank you for playing, hope you enjoyed!");
-            System.Console.In.ReadLine();
-
+            Console.Out.WriteLine("Thank you for playing, hope you enjoyed!");
+            Console.In.ReadLine();
         }
 
         private void playSingleGame()
@@ -77,8 +111,11 @@ namespace checkers
             m_CurrentPlayer = m_Player1;
             Move previousMove = null;
 
-            CheckersConsolUI.PrintScoreBoard(m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
-                m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
+            CheckersConsolUI.PrintScoreBoard(
+                m_Player1.Name,
+                m_Board.GetPlayerScore(m_Player1),
+                m_Player2.Name,
+                m_Board.GetPlayerScore(m_Player2));
             CheckersConsolUI.PrintBoard(m_Board.GetBoard());
 
             while (gameStatus == eGameStatus.playing)
@@ -86,13 +123,16 @@ namespace checkers
                 // Get a players move and preform it
                 Move currentMove = GetMove(previousMove, out eMoveStatus currentMoveStatus);
                 m_CurrentPlayer.AddMove(currentMove);
-                
+
                 CheckersConsolUI.ClearScreen();
-                CheckersConsolUI.PrintScoreBoard(m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
-                    m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
+                CheckersConsolUI.PrintScoreBoard(
+                    m_Player1.Name,
+                    m_Board.GetPlayerScore(m_Player1),
+                    m_Player2.Name,
+                    m_Board.GetPlayerScore(m_Player2));
                 CheckersConsolUI.PrintBoard(m_Board.GetBoard());
                 CheckersConsolUI.PrintLastMove(m_CurrentPlayer);
-                
+
                 // If the player can not preform another jump, change player
                 if (currentMoveStatus == eMoveStatus.AnotherJumpPossible)
                 {
@@ -103,7 +143,7 @@ namespace checkers
                     changeActivePlayer();
                     previousMove = null;
                 }
-                
+
                 gameStatus = m_Board.GetGameStatus(m_CurrentPlayer, out winner);
             }
 
@@ -117,25 +157,30 @@ namespace checkers
 
             if (i_GameStatus == eGameStatus.draw)
             {
-                System.Console.Out.WriteLine("Game ended in a draw");
+                Console.Out.WriteLine("Game ended in a draw");
             }
             else if (i_GameStatus == eGameStatus.win)
             {
-                System.Console.Out.WriteLine("{0} has won!", (m_Player1.PlayerPosition == i_Winner) ? m_Player1.Name : m_Player2.Name);
-            } else if (i_GameStatus == eGameStatus.forfit)
+                Console.Out.WriteLine(
+                    "{0} has won!",
+                    (m_Player1.PlayerPosition == i_Winner) ? m_Player1.Name : m_Player2.Name);
+            }
+            else if (i_GameStatus == eGameStatus.forfit)
             {
-                System.Console.Out.WriteLine("{0} has forfited the game :(", (m_Player1.PlayerPosition == i_Winner) ? m_Player2.Name : m_Player1.Name);
+                Console.Out.WriteLine(
+                    "{0} has forfited the game :(",
+                    (m_Player1.PlayerPosition == i_Winner) ? m_Player2.Name : m_Player1.Name);
             }
 
-            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
-            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
+            Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
+            Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
 
             m_Player1.Points += player1points;
             m_Player2.Points += player2points;
 
-            System.Console.Out.WriteLine("Total number of points:");
-            System.Console.Out.WriteLine("{0} has {1} points", m_Player1.Name, m_Player1.Points);
-            System.Console.Out.WriteLine("{0} has {1} points", m_Player2.Name, m_Player2.Points);
+            Console.Out.WriteLine("Total number of points:");
+            Console.Out.WriteLine("{0} has {1} points", m_Player1.Name, m_Player1.Points);
+            Console.Out.WriteLine("{0} has {1} points", m_Player2.Name, m_Player2.Points);
         }
 
         private Move GetMove(Move i_PreviousMove, out eMoveStatus o_MoveStatus)
@@ -152,7 +197,8 @@ namespace checkers
                         m_Board.PlayerForfit(m_CurrentPlayer, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            CheckersConsolUI.PrintMessage(new StringBuilder("You're not allowed to forfit when you're on the lead"));
+                            CheckersConsolUI.PrintMessage(
+                                new StringBuilder("You're not allowed to forfit when you're on the lead"));
                         }
                     }
                     else
@@ -163,7 +209,6 @@ namespace checkers
                             CheckersConsolUI.PrintMessage(new StringBuilder("Invalid move, enter a new one:"));
                         }
                     }
-
                 }
             }
             else
@@ -177,7 +222,6 @@ namespace checkers
             return currentMove;
         }
 
-
         private void changeActivePlayer()
         {
             // Changes the active player to the other one
@@ -190,6 +234,5 @@ namespace checkers
                 m_CurrentPlayer = m_Player1;
             }
         }
-
     }
 }

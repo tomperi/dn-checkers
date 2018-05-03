@@ -5,7 +5,7 @@
         private int m_Row;
         private int m_Col;
 
-        public Position (int i_Row, int i_Col)
+        public Position(int i_Row, int i_Col)
         {
             // New position constructor
             m_Row = i_Row;
