@@ -245,8 +245,8 @@ namespace checkers
                 {
                     moveInteger[i] = (int)moveString[i] - 'a';
                 }
-                Position startPosition = new Position(moveInteger[0], moveInteger[1]);
-                Position endPosition = new Position(moveInteger[3], moveInteger[4]);
+                Position startPosition = new Position(moveInteger[1], moveInteger[0]);
+                Position endPosition = new Position(moveInteger[4], moveInteger[3]);
                 o_ParsedMove = new Move(startPosition, endPosition);
             }
 
@@ -283,11 +283,11 @@ namespace checkers
 
             char startRow = (char) ('A' + i_Move.Begin.Row);
             char startCol = (char) ('a' + i_Move.Begin.Col);
-            moveStringBuilder.Append(startRow + "" + startCol + ">");
+            moveStringBuilder.Append(startCol + "" + startRow + ">");
 
             char endRow = (char) ('A' + i_Move.End.Row);
             char endCol = (char) ('a' + i_Move.End.Col);
-            moveStringBuilder.Append(endRow + "" + endCol);
+            moveStringBuilder.Append(endCol + "" + endRow);
 
             System.Console.Out.Write(moveStringBuilder.ToString());
         }
