@@ -66,6 +66,7 @@ namespace checkers
             {
                 o_MoveStatus = eMoveStatus.Legal;
                 changePiecePosition(i_Move);
+                checkKing(i_Move.End);
                 if (i_Move.Type == eMoveType.jump)
                 {
                     removedJumpedOverPiece(i_Move);
@@ -74,7 +75,6 @@ namespace checkers
                         o_MoveStatus = eMoveStatus.AnotherJumpPossible;
                     }
                 }
-                checkKing(i_Move.End);
             }
             else
             {
@@ -312,45 +312,49 @@ namespace checkers
             return m_Board;
         }
         
-        public eGameStatus GetGameStatus(out ePlayerPosition o_Winner, out int o_WinnerPoints, out int o_LoserPoints)
+        public eGameStatus GetGameStatus(Player i_CurrentPlayer, out ePlayerPosition o_Winner)
         {
-            // check the current game status
-            // if there is a win or a draw, return the winner and the amount of points he got
-            // Todo: a draw should only occur if the CURRENT PLAYER has no valid moves. Not both players. Add current player to the status checking
+            // Check the current game status
+            // Win -> The current player has no possible moves, the other player wins
+            //        The current player has no pieces left, the other player wins
+            // Draw -> Both players have no possible moves
+
+            ePlayerPosition currentPlayer = i_CurrentPlayer.PlayerPosition;
+            ePlayerPosition otherPlayer = (currentPlayer == ePlayerPosition.BottomPlayer)
+                ? ePlayerPosition.TopPlayer
+                : ePlayerPosition.BottomPlayer; 
+
+            int currentPlayerPossibleMoves = GetPossibleMoves(currentPlayer).Count;
+            int otherPlayerPossibleMoves = GetPossibleMoves(otherPlayer).Count;
 
             eGameStatus currentStatus = eGameStatus.playing;
-            ePlayerPosition winner = ePlayerPosition.BottomPlayer;
-            int winnerPoints = 0, loserPoints = 0;
+            ePlayerPosition winner = currentPlayer;
 
-            int numberOfMovesPossibleForTopPlayer = GetPossibleMoves(ePlayerPosition.TopPlayer).Count;
-            int numberOfMovesPossibleForBottomPlayer = GetPossibleMoves(ePlayerPosition.BottomPlayer).Count;
 
             // In case one of the players has no move, the game is either a draw or a win
-            if ((numberOfMovesPossibleForBottomPlayer == 0) || (numberOfMovesPossibleForTopPlayer == 0))
+            if ((currentPlayerPossibleMoves == 0) || (otherPlayerPossibleMoves == 0))
             {
                 currentStatus = eGameStatus.draw;
-                if (numberOfMovesPossibleForBottomPlayer != 0)
-                {
-                    currentStatus = eGameStatus.win;
-                    winner = ePlayerPosition.BottomPlayer;
-                    winnerPoints = m_BottomPlayerPoints;
-                    loserPoints = m_TopPlayerPoints;
-                }
 
-                if (numberOfMovesPossibleForTopPlayer != 0)
+                if (otherPlayerPossibleMoves != 0)
                 {
                     currentStatus = eGameStatus.win;
-                    winner = ePlayerPosition.BottomPlayer;
-                    winnerPoints = m_TopPlayerPoints;
-                    loserPoints = m_BottomPlayerPoints;
+                    winner = otherPlayer;
                 }
-            } 
+            }
 
             o_Winner = winner;
-            o_WinnerPoints = winnerPoints;
-            o_LoserPoints = loserPoints;
 
             return currentStatus;
+        }
+
+        public Move GetRandomMove(ePlayerPosition i_Player)
+        {
+            List<Move> listOfMoves = GetPossibleMoves(i_Player);
+            Random random = new Random();
+            int randomPosition = random.Next(listOfMoves.Count);
+
+            return listOfMoves[randomPosition];
         }
 
         public int GetPlayerScore(Player player)

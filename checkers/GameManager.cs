@@ -25,6 +25,7 @@ namespace checkers
         Player m_Player1;
         Player m_Player2;
         Player m_CurrentPlayer;
+        private int m_BoardSize;
 
         public GameManager()
         {
@@ -42,8 +43,7 @@ namespace checkers
             m_Player1.Name = CheckersConsolUI.GetUserNameInput();
 
             // Board size
-            int boardSize = CheckersConsolUI.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
-            m_Board = new Board(boardSize); // Todo: move the creation and initialization of the board to the PlayGame() method
+            m_BoardSize = CheckersConsolUI.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
 
             // Choose human/computer opponent, if human, enter name
             m_Player2.PlayerType = CheckersConsolUI.GetPlayerType();
@@ -56,70 +56,109 @@ namespace checkers
                 m_Player2.Name = "Computer";
             }
             
-            // Call PlayGame
-            PlayGame();
+            // Call playSingleGame
+            playSingleGame();
         }
 
-        public void PlayGame()
+        private void playSingleGame()
         {
-            // Play a single game
-            // Draw the initialized board
-            eGameStatus gameStatus = eGameStatus.playing;
+            // This method allows the user to play a single game
+
+            // Initialize a new board and print it
             CheckersConsolUI.ClearScreen();
+            m_Board = new Board(m_BoardSize);
+            eGameStatus gameStatus = eGameStatus.playing;
+            ePlayerPosition winner = ePlayerPosition.BottomPlayer;
+            m_CurrentPlayer = m_Player1;
+            Move previousMove = null;
+
+            System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}",
+                m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
+                m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
             CheckersConsolUI.PrintBoard(m_Board.GetBoard());
 
             while (gameStatus == eGameStatus.playing)
             {
-//                List<Move> listOfPossibleMoves =
-//                    m_Board.GetPossibleMoves(m_CurrentPlayer.PlayerPosition, m_CurrentPlayer.GetLastMove());
-//                CheckersConsolUI.PrintListOfMoves(listOfPossibleMoves);
-
-                Move currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
-                m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out eMoveStatus currentMoveStatus);
-
+                // Get a players move and preform it
+                Move currentMove = GetMove(previousMove, out eMoveStatus currentMoveStatus);
+                m_CurrentPlayer.AddMove(currentMove);
+                
+                CheckersConsolUI.ClearScreen();
+                System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}",
+                    m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
+                    m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
                 CheckersConsolUI.PrintBoard(m_Board.GetBoard());
+
+                // Todo: put this in the CheckersConsolUI method
+                // CheckersConsolUI.PrintLastMove(m_CurrentPlayer, m_CurrentPlayer.GetLastMove());
+                if (m_CurrentPlayer.GetLastMove() != null)
+                    System.Console.Out.WriteLine("{0}'s move was (SYMBOL): {1}", m_CurrentPlayer.Name, m_CurrentPlayer.GetLastMove().ToString());
+
+                // If the player can not preform another jump, change player
+                if (currentMoveStatus == eMoveStatus.AnotherJumpPossible)
+                {
+                    previousMove = m_CurrentPlayer.GetLastMove();
+                }
+                else
+                {
+                    changeActivePlayer();
+                    previousMove = null;
+                }
+                
+                gameStatus = m_Board.GetGameStatus(m_CurrentPlayer, out winner);
+            }
+
+            int player1points = m_Board.GetPlayerScore(m_Player1);
+            int player2points = m_Board.GetPlayerScore(m_Player2);
+
+            if (gameStatus == eGameStatus.draw)
+            {
+                System.Console.Out.WriteLine("Game ended in a draw");
+                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
+                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
+            } else if (gameStatus == eGameStatus.win)
+            {
+                System.Console.Out.WriteLine("{0} has won!", (m_Player1.PlayerPosition == winner) ? m_Player1.Name : m_Player2.Name);
+                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
+                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
+            }
+
+            m_Player1.Points += player1points;
+            m_Player2.Points += player2points;
+            System.Console.Out.WriteLine("Total number of points:");
+            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, m_Player1.Points);
+            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, m_Player2.Points);
+
+        }
+
+        private Move GetMove(Move i_PreviousMove, out eMoveStatus o_MoveStatus)
+        {
+            Move currentMove;
+            eMoveStatus currentMoveStatus;
+            if (m_CurrentPlayer.PlayerType == ePlayerType.Human)
+            {
+                currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
+                m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
 
                 while (currentMoveStatus == eMoveStatus.Illegal)
                 {
                     // Todo: put this method in the CheckersConsolUI. Idea: add a flag to GetUserMoveInput that says the move was invalid
                     System.Console.Out.WriteLine("Invalid move, enter a new one:");
                     currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer);
-                    m_Board.MovePiece(ref currentMove, m_CurrentPlayer.GetLastMove(), out currentMoveStatus);
+                    m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
                 }
-
-
-                m_CurrentPlayer.AddMove(currentMove);
-
-                gameStatus = m_Board.GetGameStatus(out ePlayerPosition winner, out int winnerPoints, out int loserPoints);
-
-                // Print the current players last move
-                CheckersConsolUI.PrintMove(m_CurrentPlayer.GetLastMove());
-
-                // If the player can not preform another jump, change player
-                if (currentMoveStatus != eMoveStatus.AnotherJumpPossible)
-                {
-                    changeActivePlayer();
-                }
-
-                CheckersConsolUI.ClearScreen();
-                CheckersConsolUI.PrintBoard(m_Board.GetBoard());
-                System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}", 
-                    m_Player1.Name, m_Board.GetPlayerScore(m_Player1), 
-                    m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
+            }
+            else
+            {
+                currentMove = m_Board.GetRandomMove(m_CurrentPlayer.PlayerPosition);
+                m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
             }
 
+            o_MoveStatus = currentMoveStatus;
 
-
-
-            // For human - write who's turn it is and get an input
-            // For computer - get a random move
+            return currentMove;
         }
 
-        private Move getRandomMove(Player i_Player)
-        {
-            // returns a move for a specific player, from all possible moves 
-            return null;
-        }
 
         private void changeActivePlayer()
         {
