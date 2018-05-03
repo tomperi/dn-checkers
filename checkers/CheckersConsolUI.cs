@@ -196,20 +196,38 @@ namespace checkers
             return choosenPlayerType;
         }
 
-        public static Move GetUserMoveInput(Player i_Player)
+        public static Move GetUserMoveInput(Player i_Player, bool i_InvalidLastPlayerMove, out bool o_quit)
         {
+            
             // TODO: Allow a user to quit (doesn't return a move, should return something else)
             System.Console.Out.Write("{0}'s turn (SYMBOL): ", i_Player.Name);
-            Move move;
-            while (!TryParseMove(System.Console.In.ReadLine(), out move))
+            Move move = null;
+            bool validMove = false, validQuit = false;
+            string userInput;
+
+            while (!(validMove || validQuit))
             {
+                userInput = System.Console.In.ReadLine();
+                validQuit = TryParseQuit(userInput);
+     
+
+                if (!validQuit)
+                {
+                    validMove = TryParseMove(userInput, out move);
+                    move.Player = i_Player.PlayerPosition;
+                }
                 System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
             }
 
-            move.Player = i_Player.PlayerPosition; 
+            o_quit = validQuit;
 
             return move;
-        }    
+        }
+
+        private static bool TryParseQuit(string i_UserInput)
+        {
+            return true;
+        }
 
         public static void ClearScreen()
         {
@@ -276,7 +294,7 @@ namespace checkers
 
         public static void PrintMove(Move i_Move)
         {
-            // Print a move in the format ROWcol>ROWCOL
+            // Print a move in the format COLROW>COLROW
             if (i_Move == null) return;
 
             StringBuilder moveStringBuilder = new StringBuilder();
