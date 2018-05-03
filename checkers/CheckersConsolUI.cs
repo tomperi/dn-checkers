@@ -13,13 +13,11 @@ namespace checkers
         public const string PLAYER_2_REGULAR = "X";
         public const string PLAYER_2_KING = "K";
 
-        public const int MAX_NAME_SIZE = 20;
-
-        public static void PrintBoard(Piece[,] board)
+        public static void PrintBoard(Piece[,] i_Board)
         {
-            int dimension = board.GetLength(0);
+            int dimension = i_Board.GetLength(0);
 
-            // Create the board header
+            // Create the i_Board header
             StringBuilder headerStringBuilder = new StringBuilder();
             char currentLabel = 'A';
 
@@ -31,7 +29,7 @@ namespace checkers
 
             headerStringBuilder.Append(createLineSeperator(dimension));
 
-            // Print the board
+            // Print the i_Board
             StringBuilder boardStringBuilder = new StringBuilder();
             currentLabel = 'a';
 
@@ -43,9 +41,9 @@ namespace checkers
 
                     string currentPieceSymbol = " ";
 
-                    if (board[i, j] != null)
+                    if (i_Board[i, j] != null)
                     {
-                        currentPieceSymbol = getPieceSymbol(board[i, j]);
+                        currentPieceSymbol = getPieceSymbol(i_Board[i, j]);
                     }
 
                     boardStringBuilder.Append(" " + currentPieceSymbol + " |");
@@ -101,25 +99,25 @@ namespace checkers
             return lineSeperator.ToString();
         }
 
-        public static string GetUserNameInput()
+        public static string GetUserNameInput(int i_MaxNameSize)
         {
-            System.Console.Out.WriteLine("Enter the player name:");
+            System.Console.Out.WriteLine("Enter the i_Player name:");
             string name = System.Console.In.ReadLine();
 
-            while(name.Length > MAX_NAME_SIZE)
+            while(name.Length > i_MaxNameSize)
             {
-                System.Console.Out.WriteLine("A name should be less then " + MAX_NAME_SIZE + " characters.");
+                System.Console.Out.WriteLine("A name should be less then " + i_MaxNameSize + " characters.");
                 name = System.Console.In.ReadLine();
             }
 
             return name;
         }
 
-        public static int GetUserBoardSize(int[] allowedBoardSizes)
+        public static int GetUserBoardSize(int[] i_AllowedBoardSizes)
         {
             StringBuilder inputRequest = new StringBuilder();
-            string allowedSizesString = intArrayToString(allowedBoardSizes);
-            inputRequest.AppendFormat("Choose a board size: {0}", allowedSizesString);
+            string allowedSizesString = intArrayToString(i_AllowedBoardSizes);
+            inputRequest.AppendFormat("Choose a i_Board size: {0}", allowedSizesString);
             PrintMessage(inputRequest);
 
             int size = 0;
@@ -145,25 +143,25 @@ namespace checkers
             return size;
         }
 
-        private static string intArrayToString(int[] array)
+        private static string intArrayToString(int[] i_Array)
         {
             StringBuilder arrayString = new StringBuilder();
-            if ((array == null) || (array.Length == 0))
+            if ((i_Array == null) || (i_Array.Length == 0))
             {
                 arrayString.Append("");
             }
-            else if (array.Length == 1)
+            else if (i_Array.Length == 1)
             {
-                arrayString.Append(array[0]);
+                arrayString.Append(i_Array[0]);
             }
             else
             {
-                for (int i = 0; i < array.Length - 1; i++)
+                for (int i = 0; i < i_Array.Length - 1; i++)
                 {
-                    arrayString.AppendFormat("{0}, ", array[i]);
+                    arrayString.AppendFormat("{0}, ", i_Array[i]);
                 }
 
-                arrayString.AppendFormat("or {0}", array[array.Length - 1]);
+                arrayString.AppendFormat("or {0}", i_Array[i_Array.Length - 1]);
             }
 
             return arrayString.ToString();
@@ -171,7 +169,7 @@ namespace checkers
 
         public static ePlayerType GetPlayerType()
         {
-            System.Console.Out.WriteLine("Choose a player - H/C (Human/Computer)");
+            System.Console.Out.WriteLine("Choose a i_Player - H/C (Human/Computer)");
             string userInput = System.Console.In.ReadLine();
             bool validPlayerType = false;
             ePlayerType choosenPlayerType = ePlayerType.Human;
@@ -190,7 +188,7 @@ namespace checkers
                 }
                 else
                 {
-                    System.Console.Out.WriteLine("Invalid player type. Enter H or C only");
+                    System.Console.Out.WriteLine("Invalid i_Player type. Enter H or C only");
                     userInput = System.Console.In.ReadLine();
                 }
             }
@@ -198,17 +196,17 @@ namespace checkers
             return choosenPlayerType;
         }
 
-        public static Move GetUserMoveInput(Player player)
+        public static Move GetUserMoveInput(Player i_Player)
         {
             // TODO: Allow a user to quit (doesn't return a move, should return something else)
-            System.Console.Out.Write("{0}'s turn (SYMBOL): ", player.Name);
+            System.Console.Out.Write("{0}'s turn (SYMBOL): ", i_Player.Name);
             Move move;
             while (!TryParseMove(System.Console.In.ReadLine(), out move))
             {
                 System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
             }
 
-            move.Player = player.PlayerPosition; 
+            move.Player = i_Player.PlayerPosition; 
 
             return move;
         }    
@@ -218,13 +216,13 @@ namespace checkers
             Ex02.ConsoleUtils.Screen.Clear();
         }
 
-        public static bool TryParseMove(string i_UserInput, out Move parsedMove)
+        public static bool TryParseMove(string i_UserInput, out Move o_ParsedMove)
         {
             // Gets a user input, if valid returns it as 2 positions
             bool validSyntax = true;
             string moveString = i_UserInput.ToLower();
             int[] moveInteger = new int[5]; 
-            parsedMove = null;
+            o_ParsedMove = null;
 
             // A move should have 5 letters only, with '>' in the middle
             if ((moveString.Length != 5) || (moveString[2] != '>'))
@@ -249,7 +247,7 @@ namespace checkers
                 }
                 Position startPosition = new Position(moveInteger[0], moveInteger[1]);
                 Position endPosition = new Position(moveInteger[3], moveInteger[4]);
-                parsedMove = new Move(startPosition, endPosition);
+                o_ParsedMove = new Move(startPosition, endPosition);
             }
 
             return validSyntax;
@@ -257,12 +255,12 @@ namespace checkers
 
         public static void PrintMessage(eListOfMessages i_Message)
         {
-            // prints some message to the screen
+            // prints some i_Message to the screen
         }
 
-        public static void PrintMessage(StringBuilder message)
+        public static void PrintMessage(StringBuilder i_Message)
         {
-            System.Console.Out.WriteLine(message.ToString());
+            System.Console.Out.WriteLine(i_Message.ToString());
         }
         public static void PrintListOfMoves(List<Move> i_ListofMoves)
         {
