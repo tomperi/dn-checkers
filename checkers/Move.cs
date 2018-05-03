@@ -4,7 +4,6 @@ namespace checkers
 {
     public class Move
     {
-        // TODO: Change move from struct to class
         private Position m_Begin;
         private Position m_End;
         private ePlayerPosition? m_Player;

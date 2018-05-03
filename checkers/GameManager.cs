@@ -5,14 +5,11 @@ using System.Text;
 namespace checkers
 {
     // Todo: Clear all irrelevant "using"
-    // Todo: Change ROWcol to COLrow in the input and output 
-    // Todo: Create GetRandomMove(ePlayerType) method in the Board class 
     // Todo: Order all relevant enums
-    // Todo: Allow playing multiple games (count points)
-    // Todo: Display relevant message on game end (who won / draw)
     // Todo: Style all the code
+    // Todo: check if there are multiple return statements in the same method and remove it
     public enum eBoardSize { small = 6, medium = 8, large = 10}
-    public enum eGameStatus { playing, win, draw }
+    public enum eGameStatus { playing, win, draw, forfit}
     public enum ePlayerType { Human, Computer }
     public enum eMoveType { regular, jump }
     public enum eMoveStatus { Legal, Illegal, AnotherJumpPossible} // syntax error should be checked in the UI part
@@ -49,17 +46,22 @@ namespace checkers
 
             // Choose human/computer opponent, if human, enter name
             m_Player2.PlayerType = CheckersConsolUI.GetPlayerType();
-            if (m_Player2.PlayerType == ePlayerType.Human)
-            {
-                m_Player2.Name = CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE);
-            }
-            else
-            {
-                m_Player2.Name = "Computer";
-            }
+            m_Player2.Name = m_Player2.PlayerType == ePlayerType.Human ? 
+                CheckersConsolUI.GetUserNameInput(MAX_NAME_SIZE) : 
+                "Computer";
             
             // Call playSingleGame
-            playSingleGame();
+            bool continuePlaying = true;
+
+            while (continuePlaying)
+            {
+                playSingleGame();
+                continuePlaying = CheckersConsolUI.GetUserAnotherGameInput();
+            }
+
+            System.Console.Out.WriteLine("Thank you for playing, hope you enjoyed!");
+            System.Console.In.ReadLine();
+
         }
 
         private void playSingleGame()
@@ -74,8 +76,7 @@ namespace checkers
             m_CurrentPlayer = m_Player1;
             Move previousMove = null;
 
-            System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}",
-                m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
+            CheckersConsolUI.PrintScoreBoard(m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
                 m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
             CheckersConsolUI.PrintBoard(m_Board.GetBoard());
 
@@ -86,16 +87,11 @@ namespace checkers
                 m_CurrentPlayer.AddMove(currentMove);
                 
                 CheckersConsolUI.ClearScreen();
-                System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}",
-                    m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
+                CheckersConsolUI.PrintScoreBoard(m_Player1.Name, m_Board.GetPlayerScore(m_Player1),
                     m_Player2.Name, m_Board.GetPlayerScore(m_Player2));
                 CheckersConsolUI.PrintBoard(m_Board.GetBoard());
-
-                // Todo: put this in the CheckersConsolUI method
-                // CheckersConsolUI.PrintLastMove(m_CurrentPlayer, m_CurrentPlayer.GetLastMove());
-                if (m_CurrentPlayer.GetLastMove() != null)
-                    System.Console.Out.WriteLine("{0}'s move was (SYMBOL): {1}", m_CurrentPlayer.Name, m_CurrentPlayer.GetLastMove().ToString());
-
+                CheckersConsolUI.PrintLastMove(m_CurrentPlayer);
+                
                 // If the player can not preform another jump, change player
                 if (currentMoveStatus == eMoveStatus.AnotherJumpPossible)
                 {
@@ -110,44 +106,63 @@ namespace checkers
                 gameStatus = m_Board.GetGameStatus(m_CurrentPlayer, out winner);
             }
 
+            concludeSingleGame(gameStatus, winner);
+        }
+
+        private void concludeSingleGame(eGameStatus i_GameStatus, ePlayerPosition i_Winner)
+        {
             int player1points = m_Board.GetPlayerScore(m_Player1);
             int player2points = m_Board.GetPlayerScore(m_Player2);
 
-            if (gameStatus == eGameStatus.draw)
+            if (i_GameStatus == eGameStatus.draw)
             {
                 System.Console.Out.WriteLine("Game ended in a draw");
-                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
-                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
-            } else if (gameStatus == eGameStatus.win)
-            {
-                System.Console.Out.WriteLine("{0} has won!", (m_Player1.PlayerPosition == winner) ? m_Player1.Name : m_Player2.Name);
-                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
-                System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
             }
+            else if (i_GameStatus == eGameStatus.win)
+            {
+                System.Console.Out.WriteLine("{0} has won!", (m_Player1.PlayerPosition == i_Winner) ? m_Player1.Name : m_Player2.Name);
+            } else if (i_GameStatus == eGameStatus.forfit)
+            {
+                System.Console.Out.WriteLine("{0} has forfited the game :(", (m_Player1.PlayerPosition == i_Winner) ? m_Player2.Name : m_Player1.Name);
+            }
+
+            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
+            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
 
             m_Player1.Points += player1points;
             m_Player2.Points += player2points;
-            System.Console.Out.WriteLine("Total number of points:");
-            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, m_Player1.Points);
-            System.Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, m_Player2.Points);
 
+            System.Console.Out.WriteLine("Total number of points:");
+            System.Console.Out.WriteLine("{0} has {1} points", m_Player1.Name, m_Player1.Points);
+            System.Console.Out.WriteLine("{0} has {1} points", m_Player2.Name, m_Player2.Points);
         }
 
         private Move GetMove(Move i_PreviousMove, out eMoveStatus o_MoveStatus)
         {
-            Move currentMove;
-            eMoveStatus currentMoveStatus;
+            Move currentMove = null;
+            eMoveStatus currentMoveStatus = eMoveStatus.Illegal;
             if (m_CurrentPlayer.PlayerType == ePlayerType.Human)
             {
-                currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer, out bool flag);
-                m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
-
                 while (currentMoveStatus == eMoveStatus.Illegal)
                 {
-                    // Todo: put this method in the CheckersConsolUI. Idea: add a flag to GetUserMoveInput that says the move was invalid
-                    System.Console.Out.WriteLine("Invalid move, enter a new one:");
-                    currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer, out bool flagflag);
-                    m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
+                    currentMove = CheckersConsolUI.GetUserMoveInput(m_CurrentPlayer, out bool forfitFlag);
+                    if (forfitFlag)
+                    {
+                        m_Board.PlayerForfit(m_CurrentPlayer, out currentMoveStatus);
+                        if (currentMoveStatus == eMoveStatus.Illegal)
+                        {
+                            CheckersConsolUI.PrintMessage(new StringBuilder("You're not allowed to forfit when you're on the lead"));
+                        }
+                    }
+                    else
+                    {
+                        m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
+                        if (currentMoveStatus == eMoveStatus.Illegal)
+                        {
+                            CheckersConsolUI.PrintMessage(new StringBuilder("Invalid move, enter a new one:"));
+                        }
+                    }
+
                 }
             }
             else

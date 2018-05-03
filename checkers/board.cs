@@ -11,6 +11,8 @@ namespace checkers
         private int m_Size;
         private int m_TopPlayerPoints;
         private int m_BottomPlayerPoints;
+        private bool m_PlayerHasForfit = false;
+        private ePlayerPosition m_PlayerForfit;
 
         public static int[] ALLOWED_BOARD_SIZES = { 6, 8, 10 };
         public static int kingPointsWorth = 4;
@@ -23,10 +25,9 @@ namespace checkers
         public Board(int i_Size)
         {
             // Create a new board of specific size, init it with pieces 
-            // TODO: Check if the board size is legit here also?
             m_Size = i_Size;
             m_Board = new Piece[m_Size,m_Size];
-            m_TopPlayerPoints = 0; // TODO: Calculate the amount of points a player starts with
+            m_TopPlayerPoints = 0; 
             m_BottomPlayerPoints = 0;
             initBoard();
         }
@@ -155,9 +156,9 @@ namespace checkers
         public List<Move> GetPossibleMoves(ePlayerPosition i_CurrentPlayer, Move i_LastMove)
         {
             List<Move> possibleMoves = new List<Move>();
+            bool multipleJumpsPossible = false;
 
             // If the last move was a jump, first check if another jump is possible for that piece
-            // Todo: change the method so it has only one return
             if ((i_LastMove != null) && (i_LastMove.Type == eMoveType.jump))
             {
                 possibleMoves = PossibleMovesForPiece(i_LastMove.End);
@@ -165,23 +166,26 @@ namespace checkers
                 {
                     possibleMoves.RemoveAll(notJump);
                     if (possibleMoves.Count > 0)
-                        return possibleMoves;
+                        multipleJumpsPossible = true;
                 }
             }
 
-            // Calculate all possible moves for a player
-            for (int i = 0; i < m_Size; i++)
+            if (!multipleJumpsPossible)
             {
-                for (int j = 0; j < m_Size; j++)
+                // Calculate all possible moves for a player
+                for (int i = 0; i < m_Size; i++)
                 {
-                    // If the piece belongs to the current player, check the possible moves for it
-                    if ((m_Board[i,j] != null) && (m_Board[i,j].PlayerPosition == i_CurrentPlayer))
-                        possibleMoves.AddRange(PossibleMovesForPiece(new Position(i,j)));
+                    for (int j = 0; j < m_Size; j++)
+                    {
+                        // If the piece belongs to the current player, check the possible moves for it
+                        if ((m_Board[i, j] != null) && (m_Board[i, j].PlayerPosition == i_CurrentPlayer))
+                            possibleMoves.AddRange(PossibleMovesForPiece(new Position(i, j)));
+                    }
                 }
-            }
 
-            if (isJumpPossible(possibleMoves, out List<Move> onlyJumps))
-                possibleMoves = onlyJumps;
+                if (isJumpPossible(possibleMoves, out List<Move> onlyJumps))
+                    possibleMoves = onlyJumps;
+            }
 
             return possibleMoves;
         }
@@ -319,30 +323,39 @@ namespace checkers
             //        The current player has no pieces left, the other player wins
             // Draw -> Both players have no possible moves
 
-            ePlayerPosition currentPlayer = i_CurrentPlayer.PlayerPosition;
-            ePlayerPosition otherPlayer = (currentPlayer == ePlayerPosition.BottomPlayer)
-                ? ePlayerPosition.TopPlayer
-                : ePlayerPosition.BottomPlayer; 
-
-            int currentPlayerPossibleMoves = GetPossibleMoves(currentPlayer).Count;
-            int otherPlayerPossibleMoves = GetPossibleMoves(otherPlayer).Count;
-
             eGameStatus currentStatus = eGameStatus.playing;
-            ePlayerPosition winner = currentPlayer;
+            ePlayerPosition winner = ePlayerPosition.TopPlayer;
 
-
-            // In case one of the players has no move, the game is either a draw or a win
-            if ((currentPlayerPossibleMoves == 0) || (otherPlayerPossibleMoves == 0))
+            if (m_PlayerHasForfit)
             {
-                currentStatus = eGameStatus.draw;
+                winner = m_PlayerForfit == ePlayerPosition.TopPlayer
+                    ? ePlayerPosition.BottomPlayer
+                    : ePlayerPosition.TopPlayer;
+                currentStatus = eGameStatus.forfit;
+            }
+            else
+            {
+                ePlayerPosition currentPlayer = i_CurrentPlayer.PlayerPosition;
+                ePlayerPosition otherPlayer = (currentPlayer == ePlayerPosition.BottomPlayer)
+                    ? ePlayerPosition.TopPlayer
+                    : ePlayerPosition.BottomPlayer;
 
-                if (otherPlayerPossibleMoves != 0)
+                int currentPlayerPossibleMoves = GetPossibleMoves(currentPlayer).Count;
+                int otherPlayerPossibleMoves = GetPossibleMoves(otherPlayer).Count;
+
+
+                // In case one of the players has no move, the game is either a draw or a win
+                if ((currentPlayerPossibleMoves == 0) || (otherPlayerPossibleMoves == 0))
                 {
-                    currentStatus = eGameStatus.win;
-                    winner = otherPlayer;
+                    currentStatus = eGameStatus.draw;
+                    if (otherPlayerPossibleMoves != 0)
+                    {
+                        currentStatus = eGameStatus.win;
+                        winner = otherPlayer;
+                    }
                 }
             }
-
+            
             o_Winner = winner;
 
             return currentStatus;
@@ -362,6 +375,27 @@ namespace checkers
             return player.PlayerPosition == ePlayerPosition.BottomPlayer
                 ? m_BottomPlayerPoints
                 : m_TopPlayerPoints;
+        }
+
+        public void PlayerForfit(Player i_PlayerForfit, out eMoveStatus i_CurrentMoveStatus)
+        {
+            int forfitPlayerPoints = (i_PlayerForfit.PlayerPosition == ePlayerPosition.BottomPlayer)
+                ? m_BottomPlayerPoints
+                : m_TopPlayerPoints;
+            int otherPlayerPoints = (i_PlayerForfit.PlayerPosition == ePlayerPosition.BottomPlayer)
+                ? m_TopPlayerPoints
+                : m_BottomPlayerPoints;
+            if (forfitPlayerPoints <= otherPlayerPoints)
+            {
+                i_CurrentMoveStatus = eMoveStatus.Legal;
+                m_PlayerHasForfit = true;
+                m_PlayerForfit = i_PlayerForfit.PlayerPosition;
+            }
+            else
+            {
+                i_CurrentMoveStatus = eMoveStatus.Illegal;
+            }
+                
         }
     }
 }

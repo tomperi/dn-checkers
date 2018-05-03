@@ -8,10 +8,10 @@ namespace checkers
 
     class CheckersConsolUI
     {
-        public const string PLAYER_1_REGULAR = "O";
-        public const string PLAYER_1_KING = "U";
-        public const string PLAYER_2_REGULAR = "X";
-        public const string PLAYER_2_KING = "K";
+        public const char PLAYER_1_REGULAR = 'O';
+        public const char PLAYER_1_KING = 'U';
+        public const char PLAYER_2_REGULAR = 'X';
+        public const char PLAYER_2_KING = 'K';
 
         public static void PrintBoard(Piece[,] i_Board)
         {
@@ -39,7 +39,7 @@ namespace checkers
                 {
                     if (j == 0) boardStringBuilder.Append(currentLabel + "|");
 
-                    string currentPieceSymbol = " ";
+                    char currentPieceSymbol = ' ';
 
                     if (i_Board[i, j] != null)
                     {
@@ -58,9 +58,9 @@ namespace checkers
             System.Console.Out.Write(boardStringBuilder.ToString());
         }
 
-        private static string getPieceSymbol(Piece i_Piece)
+        private static char getPieceSymbol(Piece i_Piece)
         {
-            string pieceSymbol = "";
+            char pieceSymbol = ' ';
             switch (i_Piece.PieceSymbol)
             {
                 case ePieceSymbol.player1regular:
@@ -117,7 +117,7 @@ namespace checkers
         {
             StringBuilder inputRequest = new StringBuilder();
             string allowedSizesString = intArrayToString(i_AllowedBoardSizes);
-            inputRequest.AppendFormat("Choose a i_Board size: {0}", allowedSizesString);
+            inputRequest.AppendFormat("Choose a board size: {0}", allowedSizesString);
             PrintMessage(inputRequest);
 
             int size = 0;
@@ -196,25 +196,26 @@ namespace checkers
             return choosenPlayerType;
         }
 
-        public static Move GetUserMoveInput(Player i_Player, out bool o_quit)
+        public static Move GetUserMoveInput(Player i_Player, out bool o_Quit)
         {
-            
-            // TODO: Allow a user to quit (doesn't return a move, should return something else)
-            System.Console.Out.Write("{0}'s turn (SYMBOL): ", i_Player.Name);
+            System.Console.Out.Write("{0}'s turn ({1}): ", i_Player.Name, getPlayerSymbol(i_Player));
             Move move = null;
             bool validMove = false, validQuit = false;
-            string userInput;
 
             while (!(validMove || validQuit))
             {
-                userInput = System.Console.In.ReadLine();
+                string userInput = System.Console.In.ReadLine().ToLower();
                 validQuit = TryParseQuit(userInput);
      
                 if (!validQuit)
                 {
                     validMove = TryParseMove(userInput, out move);
                 }
-                System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
+
+                if (!validMove && !validQuit)
+                {
+                    System.Console.Out.WriteLine("Move syntax invalid. Enter a new move:");
+                }
             }
 
             if (validMove)
@@ -222,14 +223,41 @@ namespace checkers
                 move.Player = i_Player.PlayerPosition;
             }
 
-            o_quit = validQuit;
+            o_Quit = validQuit;
 
             return move;
         }
 
         private static bool TryParseQuit(string i_UserInput)
         {
-            return false;
+            return (i_UserInput == "quit") || (i_UserInput == "q");
+        }
+
+        public static bool GetUserAnotherGameInput()
+        {
+            bool validInput = false;
+            bool anotherGame = false;
+
+            System.Console.Out.WriteLine("Would you like to play another game? Y/n");
+            while (!validInput)
+            {
+                string userInput = System.Console.In.ReadLine().ToLower();
+                if (userInput == "y" || userInput == "yes")
+                {
+                    validInput = true;
+                    anotherGame = true;
+                } else if ((userInput == "n") || (userInput == "no"))
+                {
+                    validInput = true;
+                    anotherGame = false;
+                }
+                else
+                {
+                    System.Console.Out.WriteLine("Invalid input. Write Y/n only");
+                }
+            }
+
+            return anotherGame;
         }
 
         public static void ClearScreen()
@@ -283,6 +311,7 @@ namespace checkers
         {
             System.Console.Out.WriteLine(i_Message.ToString());
         }
+
         public static void PrintListOfMoves(List<Move> i_ListofMoves)
         {
             StringBuilder listOfMoveStringBuilder = new StringBuilder();
@@ -295,22 +324,43 @@ namespace checkers
             System.Console.Out.Write(listOfMoveStringBuilder);
         }
 
-        public static void PrintMove(Move i_Move)
+        public static string PrintMove(Move i_Move)
         {
-            // Print a move in the format COLROW>COLROW
-            if (i_Move == null) return;
+            // Print a move in the format COLrow>COLrow
+            if (i_Move == null) return "";
 
             StringBuilder moveStringBuilder = new StringBuilder();
 
-            char startRow = (char) ('A' + i_Move.Begin.Row);
-            char startCol = (char) ('a' + i_Move.Begin.Col);
+            char startCol = (char)('A' + i_Move.Begin.Col);
+            char startRow = (char) ('a' + i_Move.Begin.Row);
             moveStringBuilder.Append(startCol + "" + startRow + ">");
 
-            char endRow = (char) ('A' + i_Move.End.Row);
-            char endCol = (char) ('a' + i_Move.End.Col);
+            char endCol = (char)('A' + i_Move.End.Col);
+            char endRow = (char) ('a' + i_Move.End.Row);
             moveStringBuilder.Append(endCol + "" + endRow);
 
-            System.Console.Out.Write(moveStringBuilder.ToString());
+            return (moveStringBuilder.ToString());
+        }
+
+        public static void PrintScoreBoard(string player1Name, int player1Points, string player2Name, int player2Points)
+        {
+
+            System.Console.Out.WriteLine("{0}'s points: {1} -- {2}'s points: {3}", 
+                player1Name, player1Points, player2Name, player2Points);
+        }
+
+        public static void PrintLastMove(Player i_Player)
+        {
+            char symbol = getPlayerSymbol(i_Player);
+            Move lastMove = i_Player.GetLastMove();
+            if (lastMove != null)
+                System.Console.Out.WriteLine("{0}'s move was ({1}): {2}", 
+                    i_Player.Name, getPlayerSymbol(i_Player), PrintMove(lastMove));
+        }
+
+        public static char getPlayerSymbol(Player i_Player)
+        {
+            return (int) i_Player.PlayerPosition == 1 ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
         }
     }
 }
