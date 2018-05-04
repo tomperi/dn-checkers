@@ -10,7 +10,7 @@ namespace checkers
         private static readonly int regularPointsWorth = 1;
         private readonly int m_Size;
 
-        public Piece[,] m_Board;
+        private Piece[,] m_Board;
         private int m_BottomPlayerPoints;
         private ePlayerPosition m_PlayerForfit;
         private bool m_PlayerHasForfit;

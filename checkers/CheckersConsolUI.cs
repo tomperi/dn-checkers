@@ -11,13 +11,17 @@ namespace checkers
         public const char PLAYER_2_REGULAR = 'X';
         public const char PLAYER_2_KING = 'K';
 
+        public const char ColumnBoardHeader = 'A';
+        public const char RowsBoardHeader = 'a';
+
+
         public void PrintBoard(Piece[,] i_Board)
         {
             int dimension = i_Board.GetLength(0);
 
             // Create the i_Board header
             StringBuilder headerStringBuilder = new StringBuilder();
-            char currentLabel = 'A';
+            char currentLabel = ColumnBoardHeader;
 
             for (int i = 0; i < dimension; i++)
             {
@@ -29,7 +33,7 @@ namespace checkers
 
             // Print the i_Board
             StringBuilder boardStringBuilder = new StringBuilder();
-            currentLabel = 'a';
+            currentLabel = RowsBoardHeader;
 
             for (int i = 0; i < dimension; i++)
             {
@@ -116,10 +120,8 @@ namespace checkers
 
         public int GetUserBoardSize(int[] i_AllowedBoardSizes)
         {
-            StringBuilder inputRequest = new StringBuilder();
             string allowedSizesString = intArrayToString(i_AllowedBoardSizes);
-            inputRequest.AppendFormat("Choose a board size: {0}", allowedSizesString);
-            PrintMessage(inputRequest);
+            PrintMessage(string.Format(Strings.ChooseBoardSize, allowedSizesString));
 
             int size = 0;
             bool validSize = false;
@@ -307,7 +309,7 @@ namespace checkers
 
         public void PrintMessage(string i_Message)
         {
-            Console.WriteLine();
+            Console.WriteLine(i_Message);
         }
 
         public void PrintMessage(StringBuilder i_Message)
@@ -337,15 +339,12 @@ namespace checkers
 
             StringBuilder moveStringBuilder = new StringBuilder();
 
-            char startCol = (char)('A' + i_Move.Begin.Col);
-            char startRow = (char)('a' + i_Move.Begin.Row);
-            moveStringBuilder.Append(startCol + string.Empty + startRow + ">");
+            char startCol = (char)(ColumnBoardHeader + i_Move.Begin.Col);
+            char startRow = (char)(RowsBoardHeader + i_Move.Begin.Row);
+            char endCol = (char)(ColumnBoardHeader + i_Move.End.Col);
+            char endRow = (char)(RowsBoardHeader + i_Move.End.Row);
 
-            char endCol = (char)('A' + i_Move.End.Col);
-            char endRow = (char)('a' + i_Move.End.Row);
-            moveStringBuilder.Append(endCol + string.Empty + endRow);
-
-            return moveStringBuilder.ToString();
+            return string.Format(Strings.MoveFormat, startCol, startRow, endCol, endRow);
         }
 
         public void PrintScoreBoard(string player1Name, int player1Points, string player2Name, int player2Points)

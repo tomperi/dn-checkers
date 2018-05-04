@@ -7,6 +7,9 @@ namespace checkers
     // Todo: Style all the code
     // Todo: check if there are multiple return statements in the same method and remove it
     // Todo: Update all methods/variables privacy level
+    // Todo: Switch O and X 
+    
+
     public enum eBoardSize
     {
         small = 6,

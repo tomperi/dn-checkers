@@ -6,6 +6,7 @@ namespace checkers
 {
     public class Strings
     {
+        // Console UI
         protected internal static string GetPlayerName = "Enter the player name:";
         protected internal static string NameTooLong = "A name should be less then {0} characters.";
         protected internal static string BoardMustBeInteger = "Board size can only be an integer!";
@@ -18,5 +19,11 @@ namespace checkers
         protected internal static string InValidInputYN= "Invalid input. Write Y/n only";
         protected internal static string Scores= "{0}'s points: {1} -- {2}'s points: {3}";
         protected internal static string Move= "{0}'s move was ({1}): {2}";
+        protected internal static string ChooseBoardSize= "Choose a board size: {0}";
+        protected internal static string MoveFormat= "{0}{1}>{2}{3}";
+
+        //Game manager
+        protected internal static string ChooseBoardSiz1e = "Choose a board size: {0}";
+
     }
 }
