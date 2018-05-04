@@ -21,6 +21,10 @@ namespace checkers
         protected internal static string Move= "{0}'s move was ({1}): {2}";
         protected internal static string ChooseBoardSize= "Choose a board size: {0}";
         protected internal static string MoveFormat= "{0}{1}>{2}{3}";
+        protected internal static string EndGame= "Thank you for playing, hope you enjoyed!";
+        protected internal static string Draw = "Game ended in a draw";
+        protected internal static string Winning = "{0} has won!";
+        
 
         //Game manager
         protected internal static string ChooseBoardSiz1e = "Choose a board size: {0}";

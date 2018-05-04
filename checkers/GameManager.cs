@@ -99,8 +99,7 @@ namespace checkers
                 continuePlaying = m_Ui.GetUserAnotherGameInput();
             }
 
-            Console.Out.WriteLine("Thank you for playing, hope you enjoyed!");
-            Console.In.ReadLine();
+            m_Ui.EndGameMessage();
         }
 
         private void playSingleGame()
@@ -161,13 +160,12 @@ namespace checkers
 
             if (i_GameStatus == eGameStatus.draw)
             {
-                Console.Out.WriteLine("Game ended in a draw");
+                m_Ui.Draw();
             }
             else if (i_GameStatus == eGameStatus.win)
             {
-                Console.Out.WriteLine(
-                    "{0} has won!",
-                    (m_Player1.PlayerPosition == i_Winner) ? m_Player1.Name : m_Player2.Name);
+                string winner = (m_Player1.PlayerPosition == i_Winner) ? m_Player1.Name : m_Player2.Name;
+                m_Ui.Winning(winner);
             }
             else if (i_GameStatus == eGameStatus.forfit)
             {

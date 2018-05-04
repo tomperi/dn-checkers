@@ -11,8 +11,8 @@ namespace checkers
         public const char PLAYER_2_REGULAR = 'X';
         public const char PLAYER_2_KING = 'K';
 
-        public const char ColumnBoardHeader = 'A';
-        public const char RowsBoardHeader = 'a';
+        public const char COLUMN_BOARD_HEADER = 'A';
+        public const char ROWS_BOARD_HEADER = 'a';
 
 
         public void PrintBoard(Piece[,] i_Board)
@@ -21,7 +21,7 @@ namespace checkers
 
             // Create the i_Board header
             StringBuilder headerStringBuilder = new StringBuilder();
-            char currentLabel = ColumnBoardHeader;
+            char currentLabel = COLUMN_BOARD_HEADER;
 
             for (int i = 0; i < dimension; i++)
             {
@@ -33,7 +33,7 @@ namespace checkers
 
             // Print the i_Board
             StringBuilder boardStringBuilder = new StringBuilder();
-            currentLabel = RowsBoardHeader;
+            currentLabel = ROWS_BOARD_HEADER;
 
             for (int i = 0; i < dimension; i++)
             {
@@ -339,10 +339,10 @@ namespace checkers
 
             StringBuilder moveStringBuilder = new StringBuilder();
 
-            char startCol = (char)(ColumnBoardHeader + i_Move.Begin.Col);
-            char startRow = (char)(RowsBoardHeader + i_Move.Begin.Row);
-            char endCol = (char)(ColumnBoardHeader + i_Move.End.Col);
-            char endRow = (char)(RowsBoardHeader + i_Move.End.Row);
+            char startCol = (char)(COLUMN_BOARD_HEADER + i_Move.Begin.Col);
+            char startRow = (char)(ROWS_BOARD_HEADER + i_Move.Begin.Row);
+            char endCol = (char)(COLUMN_BOARD_HEADER + i_Move.End.Col);
+            char endRow = (char)(ROWS_BOARD_HEADER + i_Move.End.Row);
 
             return string.Format(Strings.MoveFormat, startCol, startRow, endCol, endRow);
         }
@@ -374,6 +374,22 @@ namespace checkers
         public char getPlayerSymbol(Player i_Player)
         {
             return (int)i_Player.PlayerPosition == 1 ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
+        }
+
+        public void EndGameMessage()
+        {
+            PrintMessage(Strings.EndGame);
+            Console.In.ReadLine();
+        }
+
+        public void Draw()
+        {
+            PrintMessage(Strings.Draw);
+        }
+
+        public void Winning(string i_Winner)
+        {
+            PrintMessage(string.Format(Strings.Winning, i_Winner));
         }
     }
 }
