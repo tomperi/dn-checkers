@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace checkers
+﻿namespace checkers
 {
     public class Move
     {

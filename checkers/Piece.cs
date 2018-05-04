@@ -49,30 +49,33 @@
         }
 
         public ePieceSymbol PieceSymbol
-        {
+        {       
             get
             {
+                ePieceSymbol pieceSymbol;
+
                 if (m_Type == ePieceType.regular && m_PlayerPosition == ePlayerPosition.TopPlayer)
                 {
-                    return ePieceSymbol.player1regular;
+                    pieceSymbol = ePieceSymbol.player1regular;
                 }
-
-                if (m_Type == ePieceType.king && m_PlayerPosition == ePlayerPosition.TopPlayer)
+                else if (m_Type == ePieceType.king && m_PlayerPosition == ePlayerPosition.TopPlayer)
                 {
-                    return ePieceSymbol.player1king;
+                    pieceSymbol = ePieceSymbol.player1king;
                 }
-
-                if (m_Type == ePieceType.regular && m_PlayerPosition == ePlayerPosition.BottomPlayer)
+                else if (m_Type == ePieceType.regular && m_PlayerPosition == ePlayerPosition.BottomPlayer)
                 {
-                    return ePieceSymbol.player2regular;
+                    pieceSymbol = ePieceSymbol.player2regular;
                 }
-
-                if (m_Type == ePieceType.king && m_PlayerPosition == ePlayerPosition.BottomPlayer)
+                else if (m_Type == ePieceType.king && m_PlayerPosition == ePlayerPosition.BottomPlayer)
                 {
-                    return ePieceSymbol.player2king;
+                    pieceSymbol = ePieceSymbol.player2king;
+                }
+                else
+                {
+                    pieceSymbol = ePieceSymbol.player1regular;
                 }
 
-                return ePieceSymbol.player1regular;
+                return pieceSymbol;
             }
         }
 

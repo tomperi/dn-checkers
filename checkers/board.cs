@@ -223,30 +223,28 @@ namespace checkers
             Piece currentPiece = m_Board[i_PiecePosition.Row, i_PiecePosition.Col];
             List<Move> possibleMovesForPiece = new List<Move>();
 
-            if (currentPiece == null)
+            if (currentPiece != null)
             {
-                return possibleMovesForPiece;
-            }
+                ePlayerPosition player = currentPiece.PlayerPosition;
 
-            ePlayerPosition player = currentPiece.PlayerPosition;
-
-            // If the piece is a king, check moves in all directions
-            if (currentPiece.Type == ePieceType.king)
-            {
-                possibleMovesForPiece.AddRange(possibleMovesForPieceUp(i_PiecePosition, player));
-                possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition, player));
-            }
-            else
-            {
-                // If the piece is a regular, check moves according to the player 
-                if (currentPiece.PlayerPosition == ePlayerPosition.TopPlayer)
-                {
-                    possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition, player));
-                }
-
-                if (currentPiece.PlayerPosition == ePlayerPosition.BottomPlayer)
+                // If the piece is a king, check moves in all directions
+                if (currentPiece.Type == ePieceType.king)
                 {
                     possibleMovesForPiece.AddRange(possibleMovesForPieceUp(i_PiecePosition, player));
+                    possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition, player));
+                }
+                else
+                {
+                    // If the piece is a regular, check moves according to the player 
+                    if (currentPiece.PlayerPosition == ePlayerPosition.TopPlayer)
+                    {
+                        possibleMovesForPiece.AddRange(possibleMovesForPieceDown(i_PiecePosition, player));
+                    }
+
+                    if (currentPiece.PlayerPosition == ePlayerPosition.BottomPlayer)
+                    {
+                        possibleMovesForPiece.AddRange(possibleMovesForPieceUp(i_PiecePosition, player));
+                    }
                 }
             }
 

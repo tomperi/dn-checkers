@@ -1,14 +1,11 @@
-﻿using System;
-using System.Text;
-
-namespace checkers
+﻿namespace checkers
 {
     // Todo: Order all relevant enums
     // Todo: Style all the code
     // Todo: check if there are multiple return statements in the same method and remove it
     // Todo: Update all methods/variables privacy level
     // Todo: Switch O and X 
-    // Todo: The right order in row col position ToString
+    // Todo: remove blank line below the header in board
     public enum eBoardSize
     {
         small = 6,
@@ -203,7 +200,6 @@ namespace checkers
                         m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            m_Ui.PrintMessage(new StringBuilder());
                             m_Ui.InValidMove();
                         }
                     }

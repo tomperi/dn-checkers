@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace checkers
@@ -59,8 +58,8 @@ namespace checkers
             }
 
             // Print the StringBuilders 
-            Console.Out.Write(headerStringBuilder.ToString());
-            Console.Out.Write(boardStringBuilder.ToString());
+            printMessage(headerStringBuilder.ToString());
+            printMessage(boardStringBuilder.ToString());
         }
 
         private char getPieceSymbol(Piece i_Piece)
@@ -106,13 +105,13 @@ namespace checkers
 
         public string GetUserNameInput(int i_MaxNameSize)
         {
-            Console.Out.WriteLine(Strings.GetPlayerName);
-            string name = Console.In.ReadLine();
+            printMessage(Strings.GetPlayerName);
+            string name = getInputFromUser();
 
             while (name.Length > i_MaxNameSize)
             {
-                Console.Out.WriteLine(Strings.NameTooLong, i_MaxNameSize);
-                name = Console.In.ReadLine();
+                printMessage(string.Format(Strings.NameTooLong, i_MaxNameSize));
+                name = getInputFromUser();
             }
 
             return name;
@@ -121,21 +120,21 @@ namespace checkers
         public int GetUserBoardSize(int[] i_AllowedBoardSizes)
         {
             string allowedSizesString = intArrayToString(i_AllowedBoardSizes);
-            PrintMessage(string.Format(Strings.ChooseBoardSize, allowedSizesString));
+            printMessage(string.Format(Strings.ChooseBoardSize, allowedSizesString));
 
             int size = 0;
             bool validSize = false;
 
             while (!validSize)
             {
-                string userInput = Console.In.ReadLine();
+                string userInput = getInputFromUser();
                 if (!int.TryParse(userInput, out size))
                 {
-                    Console.WriteLine(Strings.BoardMustBeInteger);
+                    printMessage(Strings.BoardMustBeInteger);
                 }
                 else if ((size != 6) && (size != 8) && (size != 10))
                 {
-                    Console.WriteLine(Strings.BoardSize, allowedSizesString);
+                    printMessage(string.Format(Strings.BoardSize, allowedSizesString));
                 }
                 else
                 {
@@ -172,8 +171,8 @@ namespace checkers
 
         public ePlayerType GetPlayerType()
         {
-            Console.Out.WriteLine(Strings.ChoosePlayer);
-            string userInput = Console.In.ReadLine();
+            printMessage(Strings.ChoosePlayer);
+            string userInput = getInputFromUser();
             bool validPlayerType = false;
             ePlayerType choosenPlayerType = ePlayerType.Human;
 
@@ -191,8 +190,8 @@ namespace checkers
                 }
                 else
                 {
-                    Console.Out.WriteLine(Strings.InvalidPlayerType);
-                    userInput = Console.In.ReadLine();
+                    printMessage(Strings.InvalidPlayerType);
+                    userInput = getInputFromUser();
                 }
             }
 
@@ -201,13 +200,13 @@ namespace checkers
 
         public Move GetUserMoveInput(Player i_Player, out bool o_Quit)
         {
-            Console.Out.Write(Strings.Turn, i_Player.Name, getPlayerSymbol(i_Player));
+            printMessage(string.Format(Strings.Turn, i_Player.Name, getPlayerSymbol(i_Player)));
             Move move = null;
             bool validMove = false, validQuit = false;
 
             while (!(validMove || validQuit))
             {
-                string userInput = Console.In.ReadLine().ToLower();
+                string userInput = getInputFromUser().ToLower();
                 validQuit = TryParseQuit(userInput);
 
                 if (!validQuit)
@@ -217,7 +216,7 @@ namespace checkers
 
                 if (!validMove && !validQuit)
                 {
-                    Console.Out.WriteLine(Strings.MoveSyntaxInvalid);
+                    printMessage(Strings.MoveSyntaxInvalid);
                 }
             }
 
@@ -241,10 +240,10 @@ namespace checkers
             bool validInput = false;
             bool anotherGame = false;
 
-            Console.Out.WriteLine(Strings.AnotherGame);
+            printMessage(Strings.AnotherGame);
             while (!validInput)
             {
-                string userInput = Console.In.ReadLine().ToLower();
+                string userInput = getInputFromUser().ToLower();
                 if (userInput == "y" || userInput == "yes")
                 {
                     validInput = true;
@@ -257,7 +256,7 @@ namespace checkers
                 }
                 else
                 {
-                    Console.Out.WriteLine(Strings.InValidInputYN);
+                    printMessage(Strings.InValidInputYN);
                 }
             }
 
@@ -307,14 +306,19 @@ namespace checkers
             return validSyntax;
         }
 
-        public void PrintMessage(string i_Message)
+        private void printMessage(string i_Message)
         {
             Console.WriteLine(i_Message);
         }
 
-        public void PrintMessage(StringBuilder i_Message)
+        private void printMessage(StringBuilder i_Message)
         {
-            Console.Out.WriteLine(i_Message.ToString());
+           printMessage(i_Message.ToString());
+        }
+
+        private string getInputFromUser()
+        {
+            return Console.ReadLine();
         }
 
         public void PrintListOfMoves(List<Move> i_ListofMoves)
@@ -326,27 +330,30 @@ namespace checkers
                 listOfMoveStringBuilder.Append(Environment.NewLine);
             }
 
-            Console.Out.Write(listOfMoveStringBuilder);
+           printMessage(listOfMoveStringBuilder);
         }
 
         public string PrintMove(Move i_Move)
         {
-            // Print a move in the format COLrow>COLrow
+            string moves;
+
             if (i_Move == null)
             {
-                return string.Empty;
+                moves = string.Empty;
+            }
+            else
+            {
+                char startCol = (char)(COLUMN_BOARD_HEADER + i_Move.Begin.Col);
+                char startRow = (char)(ROWS_BOARD_HEADER + i_Move.Begin.Row);
+                char endCol = (char)(COLUMN_BOARD_HEADER + i_Move.End.Col);
+                char endRow = (char)(ROWS_BOARD_HEADER + i_Move.End.Row);
+
+                moves = string.Format(Strings.MoveFormat, startCol, startRow, endCol, endRow);
             }
 
-            StringBuilder moveStringBuilder = new StringBuilder();
-
-            char startCol = (char)(COLUMN_BOARD_HEADER + i_Move.Begin.Col);
-            char startRow = (char)(ROWS_BOARD_HEADER + i_Move.Begin.Row);
-            char endCol = (char)(COLUMN_BOARD_HEADER + i_Move.End.Col);
-            char endRow = (char)(ROWS_BOARD_HEADER + i_Move.End.Row);
-
-            return string.Format(Strings.MoveFormat, startCol, startRow, endCol, endRow);
+            return moves;
         }
-
+        //// TODO: Change write method 2 methods
         public void PrintScoreBoard(string player1Name, int player1Points, string player2Name, int player2Points)
         {
             Console.Out.WriteLine(
@@ -358,7 +365,7 @@ namespace checkers
         }
 
         public void PrintLastMove(Player i_Player)
-        {
+        {   // TODO: symbol?
             char symbol = getPlayerSymbol(i_Player);
             Move lastMove = i_Player.GetLastMove();
             if (lastMove != null)
@@ -378,45 +385,45 @@ namespace checkers
 
         public void EndGameMessage()
         {
-            PrintMessage(Strings.EndGame);
+            printMessage(Strings.EndGame);
             Console.In.ReadLine();
         }
 
         public void Draw()
         {
-            PrintMessage(Strings.Draw);
+            printMessage(Strings.Draw);
         }
 
         public void Winning(string i_Winner)
         {
-            PrintMessage(string.Format(Strings.Winning, i_Winner));
+            printMessage(string.Format(Strings.Winning, i_Winner));
         }
 
         public void PlayerForfited(string i_Forfiter)
         {
-            PrintMessage(string.Format(Strings.Forfiting, i_Forfiter));
+            printMessage(string.Format(Strings.Forfiting, i_Forfiter));
         }
 
         public void PlayerRecivedPoints(string i_PlayerName, int i_PlayerPoints)
         {
-            PrintMessage(string.Format(Strings.PlayerRecivedPoints, i_PlayerName, i_PlayerPoints));
+            printMessage(string.Format(Strings.PlayerRecivedPoints, i_PlayerName, i_PlayerPoints));
         }
 
         public void PointStatus(string i_Player1Name, int i_Player1Points, string i_Player2Name, int i_Player2Points)
         {
-            PrintMessage(string.Format(Strings.TotalPointsHead));
-            PrintMessage(string.Format(Strings.PlayerPoints, i_Player1Name, i_Player1Points));
-            PrintMessage(string.Format(Strings.PlayerPoints, i_Player2Name, i_Player2Points));
+            printMessage(string.Format(Strings.TotalPointsHead));
+            printMessage(string.Format(Strings.PlayerPoints, i_Player1Name, i_Player1Points));
+            printMessage(string.Format(Strings.PlayerPoints, i_Player2Name, i_Player2Points));
         }
 
         public void NotAllowedForfit()
         {
-            PrintMessage(Strings.NotAllowdForfit);
+            printMessage(Strings.NotAllowdForfit);
         }
 
         public void InValidMove()
         {
-            PrintMessage(Strings.InvalidMove);
+            printMessage(Strings.InvalidMove);
         }
     }
 }
