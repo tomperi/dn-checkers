@@ -2,7 +2,6 @@
 {
     // Todo: Order all relevant enums
     // Todo: Style all the code
-    // Todo: check if there are multiple return statements in the same method and remove it
     // Todo: Update all methods/variables privacy level
     // Todo: Switch O and X 
     // Todo: remove blank line below the header in board
