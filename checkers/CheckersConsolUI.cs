@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace checkers
@@ -13,7 +14,6 @@ namespace checkers
 
         public const char COLUMN_BOARD_HEADER = 'A';
         public const char ROWS_BOARD_HEADER = 'a';
-
 
         public void PrintBoard(Piece[,] i_Board)
         {
@@ -390,6 +390,33 @@ namespace checkers
         public void Winning(string i_Winner)
         {
             PrintMessage(string.Format(Strings.Winning, i_Winner));
+        }
+
+        public void PlayerForfited(string i_Forfiter)
+        {
+            PrintMessage(string.Format(Strings.Forfiting, i_Forfiter));
+        }
+
+        public void PlayerRecivedPoints(string i_PlayerName, int i_PlayerPoints)
+        {
+            PrintMessage(string.Format(Strings.PlayerRecivedPoints, i_PlayerName, i_PlayerPoints));
+        }
+
+        public void PointStatus(string i_Player1Name, int i_Player1Points, string i_Player2Name, int i_Player2Points)
+        {
+            PrintMessage(string.Format(Strings.TotalPointsHead));
+            PrintMessage(string.Format(Strings.PlayerPoints, i_Player1Name, i_Player1Points));
+            PrintMessage(string.Format(Strings.PlayerPoints, i_Player2Name, i_Player2Points));
+        }
+
+        public void NotAllowedForfit()
+        {
+            PrintMessage(Strings.NotAllowdForfit);
+        }
+
+        public void InValidMove()
+        {
+            PrintMessage(Strings.InvalidMove);
         }
     }
 }

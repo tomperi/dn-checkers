@@ -1,4 +1,6 @@
-﻿namespace checkers
+﻿using System;
+
+namespace checkers
 {
     public struct Position
     {
@@ -30,7 +32,7 @@
 
         public override string ToString()
         {
-            return "(" + m_Row + "," + m_Col + ")";
+            return string.Format(Strings.PositionFormat, m_Row, m_Col);
         }
     }
 }

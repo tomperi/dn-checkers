@@ -8,8 +8,7 @@ namespace checkers
     // Todo: check if there are multiple return statements in the same method and remove it
     // Todo: Update all methods/variables privacy level
     // Todo: Switch O and X 
-    
-
+    // Todo: The right order in row col position ToString
     public enum eBoardSize
     {
         small = 6,
@@ -169,20 +168,17 @@ namespace checkers
             }
             else if (i_GameStatus == eGameStatus.forfit)
             {
-                Console.Out.WriteLine(
-                    "{0} has forfited the game :(",
-                    (m_Player1.PlayerPosition == i_Winner) ? m_Player2.Name : m_Player1.Name);
+                string forfiter = (m_Player1.PlayerPosition == i_Winner) ? m_Player2.Name : m_Player1.Name;
+                m_Ui.PlayerForfited(forfiter);
             }
 
-            Console.Out.WriteLine("{0} recieved {1} points", m_Player1.Name, player1points);
-            Console.Out.WriteLine("{0} recieved {1} points", m_Player2.Name, player2points);
-
+            m_Ui.PlayerRecivedPoints(m_Player1.Name, player1points);
+            m_Ui.PlayerRecivedPoints(m_Player2.Name, player2points);
+         
             m_Player1.Points += player1points;
             m_Player2.Points += player2points;
 
-            Console.Out.WriteLine("Total number of points:");
-            Console.Out.WriteLine("{0} has {1} points", m_Player1.Name, m_Player1.Points);
-            Console.Out.WriteLine("{0} has {1} points", m_Player2.Name, m_Player2.Points);
+            m_Ui.PointStatus(m_Player1.Name, m_Player1.Points, m_Player2.Name, m_Player2.Points);
         }
 
         private Move GetMove(Move i_PreviousMove, out eMoveStatus o_MoveStatus)
@@ -199,8 +195,7 @@ namespace checkers
                         m_Board.PlayerForfit(m_CurrentPlayer, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            m_Ui.PrintMessage(
-                                new StringBuilder("You're not allowed to forfit when you're on the lead"));
+                            m_Ui.NotAllowedForfit();
                         }
                     }
                     else
@@ -208,7 +203,8 @@ namespace checkers
                         m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            m_Ui.PrintMessage(new StringBuilder("Invalid move, enter a new one:"));
+                            m_Ui.PrintMessage(new StringBuilder());
+                            m_Ui.InValidMove();
                         }
                     }
                 }

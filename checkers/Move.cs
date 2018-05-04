@@ -1,4 +1,6 @@
-﻿namespace checkers
+﻿using System;
+
+namespace checkers
 {
     public class Move
     {
@@ -77,7 +79,7 @@
 
         public override string ToString()
         {
-            return m_Begin.ToString() + ">" + m_End.ToString();
+            return string.Format(Strings.MoveFormat, m_Begin, m_End);
         }
     }
 }
