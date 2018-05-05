@@ -354,16 +354,26 @@ namespace checkers
             // Check the current game status
             // Win -> The current player has no possible moves, the other player wins
             //        The current player has no pieces left, the other player wins
-            // Draw -> Both players have no possible moves
+            //        The current player has forfited and has fewer points, the other player wins
+            // Draw -> Both players have no possible moves 
+            //         A player has forfited when the scoring is a tie 
             eGameStatus currentStatus = eGameStatus.Playing;
             ePlayerPosition winner = ePlayerPosition.TopPlayer;
 
             if (m_PlayerHasForfit)
             {
-                winner = (m_PlayerForfit == ePlayerPosition.TopPlayer)
-                             ? ePlayerPosition.BottomPlayer
-                             : ePlayerPosition.TopPlayer;
-                currentStatus = eGameStatus.Forfit;
+                ePlayerPosition otherPlayer = (m_PlayerForfit == ePlayerPosition.TopPlayer)
+                                  ? ePlayerPosition.BottomPlayer
+                                  : ePlayerPosition.TopPlayer;
+                if (GetPlayerScore(m_PlayerForfit) == GetPlayerScore(otherPlayer))
+                {
+                    currentStatus = eGameStatus.Draw;
+                }
+                else
+                {
+                    currentStatus = eGameStatus.Forfit;
+                    winner = otherPlayer;
+                }
             }
             else
             {
@@ -401,9 +411,9 @@ namespace checkers
             return listOfMoves[randomPosition];
         }
 
-        public int GetPlayerScore(Player i_Player)
+        public int GetPlayerScore(ePlayerPosition i_Player)
         {
-            return i_Player.PlayerPosition == ePlayerPosition.BottomPlayer ? m_BottomPlayerPoints : m_TopPlayerPoints;
+            return i_Player == ePlayerPosition.BottomPlayer ? m_BottomPlayerPoints : m_TopPlayerPoints;
         }
 
         public void PlayerForfit(Player i_PlayerForfit, out eMoveStatus i_CurrentMoveStatus)

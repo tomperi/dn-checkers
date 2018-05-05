@@ -125,8 +125,8 @@
             r_UI.ClearScreen();
             r_UI.PrintBoard(m_Board.BoardMatrix);
 
-            int player1Points = m_Board.GetPlayerScore(r_Player1);
-            int player2Points = m_Board.GetPlayerScore(r_Player2);
+            int player1Points = m_Board.GetPlayerScore(r_Player1.PlayerPosition);
+            int player2Points = m_Board.GetPlayerScore(r_Player2.PlayerPosition);
 
             switch (i_GameStatus)
             {
