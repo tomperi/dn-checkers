@@ -1,6 +1,5 @@
 ﻿namespace checkers
 {
-    // Todo: Style all the code
     public enum eBoardSize
     {
         Samll = 6,
