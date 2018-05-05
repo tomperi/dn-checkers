@@ -7,6 +7,7 @@ namespace checkers
     {
         private const int k_KingPointsWorth = 4;
         private const int k_RegularPointsWorth = 1;
+        private const int k_Difficulty = 3;
         private static readonly int[] sr_AllowedBoardSizes = { 6, 8, 10 };
         private readonly int r_Size;
 
@@ -29,6 +30,14 @@ namespace checkers
             m_TopPlayerPoints = 0;
             m_BottomPlayerPoints = 0;
             initBoard();
+        }
+
+        private Board(Piece[,] i_BoardMatrix, int i_TopPlayerPoints, int i_BottomPlayerPoints)
+        {
+            m_BoardMatrix = i_BoardMatrix;
+            r_Size = m_BoardMatrix.Length;
+            m_TopPlayerPoints = i_TopPlayerPoints;
+            m_BottomPlayerPoints = i_BottomPlayerPoints;
         }
 
         private static bool notJump(Move i_Movemove)
@@ -383,9 +392,9 @@ namespace checkers
             return currentStatus;
         }
 
-        public Move GetRandomMove(ePlayerPosition i_Player)
+        public Move GetRandomMove(ePlayerPosition i_Player, Move i_PreviousMove)
         {
-            List<Move> listOfMoves = GetPossibleMoves(i_Player);
+            List<Move> listOfMoves = GetPossibleMoves(i_Player, i_PreviousMove);
             Random random = new Random();
             int randomPosition = random.Next(listOfMoves.Count);
 

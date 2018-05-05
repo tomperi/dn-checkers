@@ -181,7 +181,7 @@
             }
             else
             {
-                currentMove = m_Board.GetRandomMove(m_CurrentPlayer.PlayerPosition);
+                currentMove = m_Board.GetRandomMove(m_CurrentPlayer.PlayerPosition, i_PreviousMove);
                 m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
             }
 
