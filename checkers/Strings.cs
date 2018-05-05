@@ -11,8 +11,8 @@ namespace checkers
         protected internal static string NameTooLong = "A name should be less then {0} characters.";
         protected internal static string BoardMustBeInteger = "Board size can only be an integer!";
         protected internal static string BoardSize = "Board size can be {0} only.";
-        protected internal static string ChoosePlayer = "Choose a player - H/C (Human/Computer)";
-        protected internal static string InvalidPlayerType = "Invalid player type. Enter H or C only";
+        protected internal static string ChoosePlayer = "Choose a player - h/c (Human/Computer)";
+        protected internal static string InvalidPlayerType = "Invalid player type. Enter h or c only";
         protected internal static string Turn = "{0}'s turn ({1}): ";
         protected internal static string MoveSyntaxInvalid = "Move syntax invalid. Enter a new move:";
         protected internal static string AnotherGame = "Would you like to play another game? Y/n";

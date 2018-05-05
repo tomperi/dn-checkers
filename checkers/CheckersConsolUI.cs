@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,13 +7,16 @@ namespace checkers
 {
     public class CheckersConsolUI
     {
-        public const char PLAYER_1_REGULAR = 'O';
-        public const char PLAYER_1_KING = 'U';
-        public const char PLAYER_2_REGULAR = 'X';
-        public const char PLAYER_2_KING = 'K';
+        private const char PLAYER_1_REGULAR = 'O';
+        private const char PLAYER_1_KING = 'U';
+        private const char PLAYER_2_REGULAR = 'X';
+        private const char PLAYER_2_KING = 'K';
 
-        public const char COLUMN_BOARD_HEADER = 'A';
-        public const char ROWS_BOARD_HEADER = 'a';
+        private const char COLUMN_BOARD_HEADER = 'A';
+        private const char ROWS_BOARD_HEADER = 'a';
+
+        private const char HUMEN_SYMBOL = 'h';
+        private const char COMPUTER_SYMBOL = 'c';
 
         public void PrintBoard(Piece[,] i_Board)
         {
@@ -58,8 +62,8 @@ namespace checkers
             }
 
             // Print the StringBuilders 
-            printMessage(headerStringBuilder.ToString());
-            printMessage(boardStringBuilder.ToString());
+            printMessage(headerStringBuilder);
+            printMessage(boardStringBuilder);
         }
 
         private char getPieceSymbol(Piece i_Piece)
@@ -131,9 +135,10 @@ namespace checkers
                 if (!int.TryParse(userInput, out size))
                 {
                     printMessage(Strings.BoardMustBeInteger);
-                }
-                else if ((size != 6) && (size != 8) && (size != 10))
+                } 
+                else if (!((IList)Board.ALLOWED_BOARD_SIZES).Contains(size))
                 {
+                    //// Todo: Tom - Is this implemention ok? casting to (IList)
                     printMessage(string.Format(Strings.BoardSize, allowedSizesString));
                 }
                 else
@@ -178,12 +183,12 @@ namespace checkers
 
             while (!validPlayerType)
             {
-                if ((userInput == "C") || (userInput == "c"))
+                if (userInput == COMPUTER_SYMBOL.ToString())
                 {
                     choosenPlayerType = ePlayerType.Computer;
                     validPlayerType = true;
                 }
-                else if ((userInput == "H") || (userInput == "h"))
+                else if (userInput == HUMEN_SYMBOL.ToString())
                 {
                     choosenPlayerType = ePlayerType.Human;
                     validPlayerType = true;
@@ -232,6 +237,7 @@ namespace checkers
 
         private bool TryParseQuit(string i_UserInput)
         {
+            //// Todo: Tom
             return (i_UserInput == "quit") || (i_UserInput == "q");
         }
 
@@ -244,6 +250,7 @@ namespace checkers
             while (!validInput)
             {
                 string userInput = getInputFromUser().ToLower();
+                ////Todo: Tom
                 if (userInput == "y" || userInput == "yes")
                 {
                     validInput = true;
@@ -313,24 +320,12 @@ namespace checkers
 
         private void printMessage(StringBuilder i_Message)
         {
-           printMessage(i_Message.ToString());
+            Console.Write(i_Message.ToString());
         }
 
         private string getInputFromUser()
         {
             return Console.ReadLine();
-        }
-
-        public void PrintListOfMoves(List<Move> i_ListofMoves)
-        {
-            StringBuilder listOfMoveStringBuilder = new StringBuilder();
-            foreach (Move move in i_ListofMoves)
-            {
-                listOfMoveStringBuilder.Append(move.ToString());
-                listOfMoveStringBuilder.Append(Environment.NewLine);
-            }
-
-           printMessage(listOfMoveStringBuilder);
         }
 
         public string PrintMove(Move i_Move)
@@ -353,34 +348,34 @@ namespace checkers
 
             return moves;
         }
-        //// TODO: Change write method 2 methods
+
         public void PrintScoreBoard(string player1Name, int player1Points, string player2Name, int player2Points)
         {
-            Console.Out.WriteLine(
+            printMessage(string.Format(
                 Strings.Scores,
                 player1Name,
                 player1Points,
                 player2Name,
-                player2Points);
+                player2Points));
         }
 
         public void PrintLastMove(Player i_Player)
-        {   // TODO: symbol?
+        { 
             char symbol = getPlayerSymbol(i_Player);
             Move lastMove = i_Player.GetLastMove();
             if (lastMove != null)
             {
-                Console.Out.WriteLine(
+                printMessage(string.Format(
                     Strings.Move,
                     i_Player.Name,
-                    getPlayerSymbol(i_Player),
-                    PrintMove(lastMove));
+                    symbol,
+                    PrintMove(lastMove)));
             }
         }
 
-        public char getPlayerSymbol(Player i_Player)
+        private char getPlayerSymbol(Player i_Player)
         {
-            return (int)i_Player.PlayerPosition == 1 ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
+            return i_Player.PlayerPosition == ePlayerPosition.TopPlayer ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
         }
 
         public void EndGameMessage()

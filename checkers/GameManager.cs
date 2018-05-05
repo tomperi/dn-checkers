@@ -1,10 +1,7 @@
 ﻿namespace checkers
 {
-    // Todo: Order all relevant enums
     // Todo: Style all the code
-    // Todo: Update all methods/variables privacy level
-    // Todo: Switch O and X 
-    // Todo: remove blank line below the header in board
+    // Todo: Tom - The score balance w.o blank line below it. is it ok?
     public enum eBoardSize
     {
         small = 6,
@@ -39,10 +36,6 @@
         AnotherJumpPossible
     } // syntax error should be checked in the UI part
 
-    public enum eListOfMessages
-    {
-    } // all possible ui messages 
-
     public enum eSquareStatus
     {
         empty,
@@ -53,11 +46,11 @@
     public class GameManager
     {
         private const int MAX_NAME_SIZE = 20;
-        Board m_Board;
+        private Board m_Board;
         private int m_BoardSize;
-        Player m_CurrentPlayer;
-        Player m_Player1;
-        Player m_Player2;
+        private Player m_CurrentPlayer;
+        private Player m_Player1;
+        private Player m_Player2;
 
         private CheckersConsolUI m_Ui = new CheckersConsolUI();
 
@@ -114,7 +107,7 @@
                 m_Board.GetPlayerScore(m_Player1),
                 m_Player2.Name,
                 m_Board.GetPlayerScore(m_Player2));
-                m_Ui.PrintBoard(m_Board.GetBoard());
+                m_Ui.PrintBoard(m_Board.BoardMatrix);
 
             while (gameStatus == eGameStatus.playing)
             {
@@ -128,7 +121,7 @@
                     m_Board.GetPlayerScore(m_Player1),
                     m_Player2.Name,
                     m_Board.GetPlayerScore(m_Player2));
-                    m_Ui.PrintBoard(m_Board.GetBoard());
+                    m_Ui.PrintBoard(m_Board.BoardMatrix);
                     m_Ui.PrintLastMove(m_CurrentPlayer);
 
                 // If the player can not preform another jump, change player
