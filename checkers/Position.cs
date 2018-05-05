@@ -2,21 +2,20 @@
 {
     public struct Position
     {
-        private int m_Row;
-        private int m_Col;
+        private readonly int r_Row;
+        private readonly int r_Col;
 
         public Position(int i_Row, int i_Col)
         {
-            // New position constructor
-            m_Row = i_Row;
-            m_Col = i_Col;
+            r_Row = i_Row;
+            r_Col = i_Col;
         }
 
         public int Row
         {
             get
             {
-                return m_Row;
+                return r_Row;
             }
         }
 
@@ -24,13 +23,13 @@
         {
             get
             {
-                return m_Col;
+                return r_Col;
             }
         }
 
         public override string ToString()
         {
-            return string.Format(Strings.PositionFormat, m_Col, m_Row);
+            return string.Format(Strings.PositionFormat, r_Col, r_Row);
         }
     }
 }

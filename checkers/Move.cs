@@ -1,17 +1,19 @@
-﻿namespace checkers
+﻿using System;
+
+namespace checkers
 {
     public class Move
     {
-        private Position m_Begin;
-        private Position m_End;
+        private readonly Position r_Begin;
+        private readonly Position r_End;
         private ePlayerPosition? m_Player;
         private eMoveType? m_Type;
 
         public Move(Position i_Begin, Position i_End, ePlayerPosition i_Player)
         {
             // New move constructor
-            m_Begin = i_Begin;
-            m_End = i_End;
+            r_Begin = i_Begin;
+            r_End = i_End;
             m_Player = i_Player;
             m_Type = null;
         }
@@ -19,25 +21,25 @@
         public Move(Position i_Begin, Position i_End, ePlayerPosition i_Player, eMoveType i_MoveType)
         {
             // New move constructor
-            m_Begin = i_Begin;
-            m_End = i_End;
+            r_Begin = i_Begin;
+            r_End = i_End;
             m_Player = i_Player;
             m_Type = i_MoveType;
         }
 
         public Move(Position i_Begin, Position i_End)
         {
-            m_Begin = i_Begin;
-            m_End = i_End;
+            r_Begin = i_Begin;
+            r_End = i_End;
             m_Player = null;
-            m_Type = eMoveType.regular;
+            m_Type = eMoveType.Regular;
         }
 
         public Position Begin
         {
             get
             {
-                return m_Begin;
+                return r_Begin;
             }
         }
 
@@ -45,7 +47,7 @@
         {
             get
             {
-                return m_End;
+                return r_End;
             }
         }
 
@@ -53,7 +55,7 @@
         {
             get
             {
-                return m_Player.Value;
+                return m_Player != null ? m_Player.Value : throw new Exception();
             }
 
             set
@@ -66,7 +68,7 @@
         {
             get
             {
-                return m_Type.Value;
+                return m_Type != null ? m_Type.Value : throw new Exception();
             }
 
             set
@@ -77,7 +79,7 @@
 
         public override string ToString()
         {
-            return string.Format(Strings.MoveFormat, m_Begin, m_End);
+            return string.Format(Strings.MoveFormat, r_Begin, r_End);
         }
     }
 }

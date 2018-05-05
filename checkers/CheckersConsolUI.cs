@@ -1,30 +1,40 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 
 namespace checkers
 {
     public class CheckersConsolUI
     {
-        private const char PLAYER_1_REGULAR = 'O';
-        private const char PLAYER_1_KING = 'U';
-        private const char PLAYER_2_REGULAR = 'X';
-        private const char PLAYER_2_KING = 'K';
 
-        private const char COLUMN_BOARD_HEADER = 'A';
-        private const char ROWS_BOARD_HEADER = 'a';
+        // Consol UI settings
+        private const char k_Player1Regular = 'O';
+        private const char k_Player1King = 'U';
+        private const char k_Player2Regular = 'X';
+        private const char k_Player2King = 'K';
 
-        private const char HUMEN_SYMBOL = 'h';
-        private const char COMPUTER_SYMBOL = 'c';
+        private const char k_ColumnBoardHeader = 'A';
+        private const char k_RowsBoardHeader = 'a';
+
+        private const char k_HumenSymbol = 'h';
+        private const char k_ComputerSymbol = 'c';
+
+        private const string k_Quit = "quit";
+        private const string k_QuitShortcut = "q";
+
+        private const string k_Yes = "yes";
+        private const string k_YesShortcut = "y";
+
+        private const string k_No = "no";
+        private const string k_NoShortcut = "n";
 
         public void PrintBoard(Piece[,] i_Board)
         {
             int dimension = i_Board.GetLength(0);
 
-            // Create the i_Board header
+            // Create the board header
             StringBuilder headerStringBuilder = new StringBuilder();
-            char currentLabel = COLUMN_BOARD_HEADER;
+            char currentLabel = k_ColumnBoardHeader;
 
             for (int i = 0; i < dimension; i++)
             {
@@ -34,9 +44,9 @@ namespace checkers
 
             headerStringBuilder.Append(createLineSeperator(dimension));
 
-            // Print the i_Board
+            // Print the board
             StringBuilder boardStringBuilder = new StringBuilder();
-            currentLabel = ROWS_BOARD_HEADER;
+            currentLabel = k_RowsBoardHeader;
 
             for (int i = 0; i < dimension; i++)
             {
@@ -60,8 +70,7 @@ namespace checkers
                 currentLabel++;
                 boardStringBuilder.Append(createLineSeperator(dimension));
             }
-
-            // Print the StringBuilders 
+ 
             printMessage(headerStringBuilder);
             printMessage(boardStringBuilder);
         }
@@ -71,19 +80,17 @@ namespace checkers
             char pieceSymbol = ' ';
             switch (i_Piece.PieceSymbol)
             {
-                case ePieceSymbol.player1regular:
-                    pieceSymbol = PLAYER_1_REGULAR;
+                case ePieceSymbol.Player1Regular:
+                    pieceSymbol = k_Player1Regular;
                     break;
-                case ePieceSymbol.player1king:
-                    pieceSymbol = PLAYER_1_KING;
+                case ePieceSymbol.Player1King:
+                    pieceSymbol = k_Player1King;
                     break;
-                case ePieceSymbol.player2regular:
-                    pieceSymbol = PLAYER_2_REGULAR;
+                case ePieceSymbol.Player2Regular:
+                    pieceSymbol = k_Player2Regular;
                     break;
-                case ePieceSymbol.player2king:
-                    pieceSymbol = PLAYER_2_KING;
-                    break;
-                default:
+                case ePieceSymbol.Player2King:
+                    pieceSymbol = k_Player2King;
                     break;
             }
 
@@ -136,9 +143,8 @@ namespace checkers
                 {
                     printMessage(Strings.BoardMustBeInteger);
                 } 
-                else if (!((IList)Board.ALLOWED_BOARD_SIZES).Contains(size))
+                else if (!((IList)Board.sr_AllowedBoardSizes).Contains(size))
                 {
-                    //// Todo: Tom - Is this implemention ok? casting to (IList)
                     printMessage(string.Format(Strings.BoardSize, allowedSizesString));
                 }
                 else
@@ -150,10 +156,10 @@ namespace checkers
             return size;
         }
 
-        private string intArrayToString(int[] i_Array)
+        private static string intArrayToString(int[] i_Array)
         {
             StringBuilder arrayString = new StringBuilder();
-            if ((i_Array == null) || (i_Array.Length == 0))
+            if (i_Array == null || i_Array.Length == 0)
             {
                 arrayString.Append(string.Empty);
             }
@@ -177,18 +183,18 @@ namespace checkers
         public ePlayerType GetPlayerType()
         {
             printMessage(Strings.ChoosePlayer);
-            string userInput = getInputFromUser();
+            string userInput = getInputFromUser().ToLower();
             bool validPlayerType = false;
             ePlayerType choosenPlayerType = ePlayerType.Human;
 
             while (!validPlayerType)
             {
-                if (userInput == COMPUTER_SYMBOL.ToString())
+                if (userInput == k_ComputerSymbol.ToString())
                 {
                     choosenPlayerType = ePlayerType.Computer;
                     validPlayerType = true;
                 }
-                else if (userInput == HUMEN_SYMBOL.ToString())
+                else if (userInput == k_HumenSymbol.ToString())
                 {
                     choosenPlayerType = ePlayerType.Human;
                     validPlayerType = true;
@@ -212,7 +218,7 @@ namespace checkers
             while (!(validMove || validQuit))
             {
                 string userInput = getInputFromUser().ToLower();
-                validQuit = TryParseQuit(userInput);
+                validQuit = tryParseQuit(userInput);
 
                 if (!validQuit)
                 {
@@ -235,10 +241,9 @@ namespace checkers
             return move;
         }
 
-        private bool TryParseQuit(string i_UserInput)
+        private static bool tryParseQuit(string i_UserInput)
         {
-            //// Todo: Tom
-            return (i_UserInput == "quit") || (i_UserInput == "q");
+            return (i_UserInput == k_Quit) || (i_UserInput == k_QuitShortcut);
         }
 
         public bool GetUserAnotherGameInput()
@@ -250,20 +255,20 @@ namespace checkers
             while (!validInput)
             {
                 string userInput = getInputFromUser().ToLower();
-                ////Todo: Tom
-                if (userInput == "y" || userInput == "yes")
+                switch (userInput)
                 {
-                    validInput = true;
-                    anotherGame = true;
-                }
-                else if ((userInput == "n") || (userInput == "no"))
-                {
-                    validInput = true;
-                    anotherGame = false;
-                }
-                else
-                {
-                    printMessage(Strings.InValidInputYN);
+                    case k_Yes:
+                    case k_YesShortcut:
+                        validInput = true;
+                        anotherGame = true;
+                        break;
+                    case k_No:
+                    case k_NoShortcut:
+                        validInput = true;
+                        break;
+                    default:
+                        printMessage(Strings.InValidInputYN);
+                        break;
                 }
             }
 
@@ -302,7 +307,7 @@ namespace checkers
             {
                 for (int i = 0; i < moveInteger.Length; i++)
                 {
-                    moveInteger[i] = (int)moveString[i] - 'a';
+                    moveInteger[i] = moveString[i] - 'a';
                 }
 
                 Position startPosition = new Position(moveInteger[1], moveInteger[0]);
@@ -330,33 +335,33 @@ namespace checkers
 
         public string PrintMove(Move i_Move)
         {
-            string moves;
+            string move;
 
             if (i_Move == null)
             {
-                moves = string.Empty;
+                move = string.Empty;
             }
             else
             {
-                char startCol = (char)(COLUMN_BOARD_HEADER + i_Move.Begin.Col);
-                char startRow = (char)(ROWS_BOARD_HEADER + i_Move.Begin.Row);
-                char endCol = (char)(COLUMN_BOARD_HEADER + i_Move.End.Col);
-                char endRow = (char)(ROWS_BOARD_HEADER + i_Move.End.Row);
+                char startCol = (char)(k_ColumnBoardHeader + i_Move.Begin.Col);
+                char startRow = (char)(k_RowsBoardHeader + i_Move.Begin.Row);
+                char endCol = (char)(k_ColumnBoardHeader + i_Move.End.Col);
+                char endRow = (char)(k_RowsBoardHeader + i_Move.End.Row);
 
-                moves = string.Format(Strings.MoveFormat, startCol, startRow, endCol, endRow);
+                move = string.Format(Strings.MoveFormat, startCol, startRow, endCol, endRow);
             }
 
-            return moves;
+            return move;
         }
 
-        public void PrintScoreBoard(string player1Name, int player1Points, string player2Name, int player2Points)
+        public void PrintScoreBoard(string i_Player1Name, int i_Player1Points, string i_Player2Name, int i_Player2Points)
         {
             printMessage(string.Format(
                 Strings.Scores,
-                player1Name,
-                player1Points,
-                player2Name,
-                player2Points));
+                i_Player1Name,
+                i_Player1Points,
+                i_Player2Name,
+                i_Player2Points));
         }
 
         public void PrintLastMove(Player i_Player)
@@ -373,9 +378,9 @@ namespace checkers
             }
         }
 
-        private char getPlayerSymbol(Player i_Player)
+        private static char getPlayerSymbol(Player i_Player)
         {
-            return i_Player.PlayerPosition == ePlayerPosition.TopPlayer ? PLAYER_1_REGULAR : PLAYER_2_REGULAR;
+            return i_Player.PlayerPosition == ePlayerPosition.TopPlayer ? k_Player1Regular : k_Player2Regular;
         }
 
         public void EndGameMessage()

@@ -8,28 +8,27 @@
 
     public enum ePieceType
     {
-        regular,
-        king
+        Regular,
+        King
     }
 
     public enum ePieceSymbol
     {
-        player1regular,
-        player1king,
-        player2regular,
-        player2king
+        Player1Regular,
+        Player1King,
+        Player2Regular,
+        Player2King
     }
 
     public class Piece
     {
-        private ePlayerPosition m_PlayerPosition;
+        private readonly ePlayerPosition r_PlayerPosition;
         private ePieceType m_Type;
 
         public Piece(ePlayerPosition i_PlayerPosition)
         {
-            // new piece constructor
-            m_PlayerPosition = i_PlayerPosition;
-            m_Type = ePieceType.regular;
+            r_PlayerPosition = i_PlayerPosition;
+            m_Type = ePieceType.Regular;
         }
 
         public ePieceType Type
@@ -44,7 +43,7 @@
         {
             get
             {
-                return m_PlayerPosition;
+                return r_PlayerPosition;
             }
         }
 
@@ -54,25 +53,25 @@
             {
                 ePieceSymbol pieceSymbol;
 
-                if (m_Type == ePieceType.regular && m_PlayerPosition == ePlayerPosition.TopPlayer)
+                if (m_Type == ePieceType.Regular && r_PlayerPosition == ePlayerPosition.TopPlayer)
                 {
-                    pieceSymbol = ePieceSymbol.player1regular;
+                    pieceSymbol = ePieceSymbol.Player1Regular;
                 }
-                else if (m_Type == ePieceType.king && m_PlayerPosition == ePlayerPosition.TopPlayer)
+                else if (m_Type == ePieceType.King && r_PlayerPosition == ePlayerPosition.TopPlayer)
                 {
-                    pieceSymbol = ePieceSymbol.player1king;
+                    pieceSymbol = ePieceSymbol.Player1King;
                 }
-                else if (m_Type == ePieceType.regular && m_PlayerPosition == ePlayerPosition.BottomPlayer)
+                else if (m_Type == ePieceType.Regular && r_PlayerPosition == ePlayerPosition.BottomPlayer)
                 {
-                    pieceSymbol = ePieceSymbol.player2regular;
+                    pieceSymbol = ePieceSymbol.Player2Regular;
                 }
-                else if (m_Type == ePieceType.king && m_PlayerPosition == ePlayerPosition.BottomPlayer)
+                else if (m_Type == ePieceType.King && r_PlayerPosition == ePlayerPosition.BottomPlayer)
                 {
-                    pieceSymbol = ePieceSymbol.player2king;
+                    pieceSymbol = ePieceSymbol.Player2King;
                 }
                 else
                 {
-                    pieceSymbol = ePieceSymbol.player1regular;
+                    pieceSymbol = ePieceSymbol.Player1Regular;
                 }
 
                 return pieceSymbol;
@@ -81,7 +80,7 @@
 
         public void SetKing()
         {
-            m_Type = ePieceType.king;
+            m_Type = ePieceType.King;
         }
     }
 }

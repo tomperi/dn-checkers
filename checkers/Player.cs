@@ -6,13 +6,13 @@ namespace checkers
     {
         private List<Move> m_MoveHistory;
         private string m_Name;
-        private ePlayerPosition m_PlayerPosition;
+        private readonly ePlayerPosition r_PlayerPosition;
         private ePlayerType m_PlayerType;
-        private int m_Points = 0;
+        private int m_Points;
 
         public Player(ePlayerPosition i_PlayerPosition)
         {
-            m_PlayerPosition = i_PlayerPosition;
+            r_PlayerPosition = i_PlayerPosition;
             m_MoveHistory = new List<Move>();
         }
 
@@ -59,19 +59,17 @@ namespace checkers
         {
             get
             {
-                return m_PlayerPosition;
+                return r_PlayerPosition;
             }
         }
 
         public void ClearMoveHistory()
         {
-            // clears the move history, in order to start a new game
             m_MoveHistory = new List<Move>();
         }
 
         public void AddMove(Move i_Move)
         {
-            // Add a move to the players move history
             m_MoveHistory.Add(i_Move);
         }
 

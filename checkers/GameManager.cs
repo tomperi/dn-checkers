@@ -1,20 +1,19 @@
 ﻿namespace checkers
 {
     // Todo: Style all the code
-    // Todo: Tom - The score balance w.o blank line below it. is it ok?
     public enum eBoardSize
     {
-        small = 6,
-        medium = 8,
-        large = 10
+        Samll = 6,
+        Medium = 8,
+        Large = 10
     }
 
     public enum eGameStatus
     {
-        playing,
-        win,
-        draw,
-        forfit
+        Playing,
+        Win,
+        Draw,
+        Forfit
     }
 
     public enum ePlayerType
@@ -25,8 +24,8 @@
 
     public enum eMoveType
     {
-        regular,
-        jump
+        Regular,
+        Jump
     }
 
     public enum eMoveStatus
@@ -34,95 +33,77 @@
         Legal,
         Illegal,
         AnotherJumpPossible
-    } // syntax error should be checked in the UI part
+    } 
 
     public enum eSquareStatus
     {
-        empty,
-        outOfBounds,
-        occupied
+        Empty,
+        OutOfBounds,
+        Occupied
     }
 
     public class GameManager
     {
-        private const int MAX_NAME_SIZE = 20;
+        private const int k_MaxNameSize = 20;
         private Board m_Board;
         private int m_BoardSize;
         private Player m_CurrentPlayer;
-        private Player m_Player1;
-        private Player m_Player2;
+        private readonly Player r_Player1;
+        private readonly Player r_Player2;
 
-        private CheckersConsolUI m_Ui = new CheckersConsolUI();
+        private readonly CheckersConsolUI r_UI;
 
         public GameManager()
         {
-            // Default constructor
-            m_Player1 = new Player(ePlayerPosition.BottomPlayer);
-            m_Player2 = new Player(ePlayerPosition.TopPlayer);
-            m_CurrentPlayer = m_Player1;
+            r_Player1 = new Player(ePlayerPosition.BottomPlayer);
+            r_Player2 = new Player(ePlayerPosition.TopPlayer);
+            m_CurrentPlayer = r_Player1;
+            r_UI = new CheckersConsolUI();
         }
 
         public void Start()
         {
-            // Runs several games with the same configuration
+            r_Player1.Name = r_UI.GetUserNameInput(k_MaxNameSize);
 
-            // User name
-            m_Player1.Name = m_Ui.GetUserNameInput(MAX_NAME_SIZE);
+            m_BoardSize = r_UI.GetUserBoardSize(Board.sr_AllowedBoardSizes);
 
-            // Board size
-            m_BoardSize = m_Ui.GetUserBoardSize(Board.ALLOWED_BOARD_SIZES);
-
-            // Choose human/computer opponent, if human, enter name
-            m_Player2.PlayerType = m_Ui.GetPlayerType();
-            m_Player2.Name = m_Player2.PlayerType == ePlayerType.Human
-                                 ? m_Ui.GetUserNameInput(MAX_NAME_SIZE)
+            r_Player2.PlayerType = r_UI.GetPlayerType();
+            r_Player2.Name = r_Player2.PlayerType == ePlayerType.Human
+                                 ? r_UI.GetUserNameInput(k_MaxNameSize)
                                  : "Computer";
 
-            // Call playSingleGame
             bool continuePlaying = true;
 
             while (continuePlaying)
             {
                 playSingleGame();
-                continuePlaying = m_Ui.GetUserAnotherGameInput();
+                continuePlaying = r_UI.GetUserAnotherGameInput();
             }
 
-            m_Ui.EndGameMessage();
+            r_UI.EndGameMessage();
         }
 
         private void playSingleGame()
         {
-            // This method allows the user to play a single game
-
-            // Initialize a new board and print it
-            m_Ui.ClearScreen();
+            // Initialize a new game - new board, players history, game status and starting player
+            r_UI.ClearScreen();
             m_Board = new Board(m_BoardSize);
-            eGameStatus gameStatus = eGameStatus.playing;
+            eGameStatus gameStatus = eGameStatus.Playing;
             ePlayerPosition winner = ePlayerPosition.BottomPlayer;
-            m_CurrentPlayer = m_Player1;
+            r_Player1.ClearMoveHistory();
+            r_Player2.ClearMoveHistory();
+            m_CurrentPlayer = r_Player1;
             Move previousMove = null;
-
-            m_Ui.PrintScoreBoard(
-                m_Player1.Name,
-                m_Board.GetPlayerScore(m_Player1),
-                m_Player2.Name,
-                m_Board.GetPlayerScore(m_Player2));
-                m_Ui.PrintBoard(m_Board.BoardMatrix);
-
-            while (gameStatus == eGameStatus.playing)
+            
+            while (gameStatus == eGameStatus.Playing)
             {
-                // Get a players move and preform it
-                Move currentMove = GetMove(previousMove, out eMoveStatus currentMoveStatus);
-                m_CurrentPlayer.AddMove(currentMove);
+                r_UI.ClearScreen();
+                r_UI.PrintBoard(m_Board.BoardMatrix);
+                r_UI.PrintLastMove(m_CurrentPlayer);
 
-                m_Ui.ClearScreen();
-                m_Ui.PrintScoreBoard(
-                    m_Player1.Name,
-                    m_Board.GetPlayerScore(m_Player1),
-                    m_Player2.Name,
-                    m_Board.GetPlayerScore(m_Player2));
-                    m_Ui.PrintBoard(m_Board.BoardMatrix);
-                    m_Ui.PrintLastMove(m_CurrentPlayer);
+                // Get a players move and preform it
+                Move currentMove = getMove(previousMove, out eMoveStatus currentMoveStatus);
+                m_CurrentPlayer.AddMove(currentMove);
 
                 // If the player can not preform another jump, change player
                 if (currentMoveStatus == eMoveStatus.AnotherJumpPossible)
@@ -143,34 +124,34 @@
 
         private void concludeSingleGame(eGameStatus i_GameStatus, ePlayerPosition i_Winner)
         {
-            int player1points = m_Board.GetPlayerScore(m_Player1);
-            int player2points = m_Board.GetPlayerScore(m_Player2);
+            int player1Points = m_Board.GetPlayerScore(r_Player1);
+            int player2Points = m_Board.GetPlayerScore(r_Player2);
 
-            if (i_GameStatus == eGameStatus.draw)
+            switch (i_GameStatus)
             {
-                m_Ui.Draw();
-            }
-            else if (i_GameStatus == eGameStatus.win)
-            {
-                string winner = (m_Player1.PlayerPosition == i_Winner) ? m_Player1.Name : m_Player2.Name;
-                m_Ui.Winning(winner);
-            }
-            else if (i_GameStatus == eGameStatus.forfit)
-            {
-                string forfiter = (m_Player1.PlayerPosition == i_Winner) ? m_Player2.Name : m_Player1.Name;
-                m_Ui.PlayerForfited(forfiter);
+                case eGameStatus.Draw:
+                    r_UI.Draw();
+                    break;
+                case eGameStatus.Win:
+                    string winner = (r_Player1.PlayerPosition == i_Winner) ? r_Player1.Name : r_Player2.Name;
+                    r_UI.Winning(winner);
+                    break;
+                case eGameStatus.Forfit:
+                    string forfiter = (r_Player1.PlayerPosition == i_Winner) ? r_Player2.Name : r_Player1.Name;
+                    r_UI.PlayerForfited(forfiter);
+                    break;
             }
 
-            m_Ui.PlayerRecivedPoints(m_Player1.Name, player1points);
-            m_Ui.PlayerRecivedPoints(m_Player2.Name, player2points);
+            r_UI.PlayerRecivedPoints(r_Player1.Name, player1Points);
+            r_UI.PlayerRecivedPoints(r_Player2.Name, player2Points);
          
-            m_Player1.Points += player1points;
-            m_Player2.Points += player2points;
+            r_Player1.Points += player1Points;
+            r_Player2.Points += player2Points;
 
-            m_Ui.PointStatus(m_Player1.Name, m_Player1.Points, m_Player2.Name, m_Player2.Points);
+            r_UI.PointStatus(r_Player1.Name, r_Player1.Points, r_Player2.Name, r_Player2.Points);
         }
 
-        private Move GetMove(Move i_PreviousMove, out eMoveStatus o_MoveStatus)
+        private Move getMove(Move i_PreviousMove, out eMoveStatus o_MoveStatus)
         {
             Move currentMove = null;
             eMoveStatus currentMoveStatus = eMoveStatus.Illegal;
@@ -178,13 +159,13 @@
             {
                 while (currentMoveStatus == eMoveStatus.Illegal)
                 {
-                    currentMove = m_Ui.GetUserMoveInput(m_CurrentPlayer, out bool forfitFlag);
+                    currentMove = r_UI.GetUserMoveInput(m_CurrentPlayer, out bool forfitFlag);
                     if (forfitFlag)
                     {
                         m_Board.PlayerForfit(m_CurrentPlayer, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            m_Ui.NotAllowedForfit();
+                            r_UI.NotAllowedForfit();
                         }
                     }
                     else
@@ -192,7 +173,7 @@
                         m_Board.MovePiece(ref currentMove, i_PreviousMove, out currentMoveStatus);
                         if (currentMoveStatus == eMoveStatus.Illegal)
                         {
-                            m_Ui.InValidMove();
+                            r_UI.InValidMove();
                         }
                     }
                 }
@@ -210,15 +191,7 @@
 
         private void changeActivePlayer()
         {
-            // Changes the active player to the other one
-            if (m_CurrentPlayer == m_Player1)
-            {
-                m_CurrentPlayer = m_Player2;
-            }
-            else
-            {
-                m_CurrentPlayer = m_Player1;
-            }
+            m_CurrentPlayer = (m_CurrentPlayer == r_Player1) ? r_Player2 : r_Player1;
         }
     }
 }
