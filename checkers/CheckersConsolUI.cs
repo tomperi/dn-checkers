@@ -6,7 +6,6 @@ namespace checkers
 {
     public class CheckersConsolUI
     {
-
         // Consol UI settings
         private const char k_Player1Regular = 'O';
         private const char k_Player1King = 'U';
@@ -73,6 +72,40 @@ namespace checkers
  
             printMessage(headerStringBuilder);
             printMessage(boardStringBuilder);
+        }
+
+        private static bool tryParseQuit(string i_UserInput)
+        {
+            return (i_UserInput == k_Quit) || (i_UserInput == k_QuitShortcut);
+        }
+
+        private static string intArrayToString(int[] i_Array)
+        {
+            StringBuilder arrayString = new StringBuilder();
+            if (i_Array == null || i_Array.Length == 0)
+            {
+                arrayString.Append(string.Empty);
+            }
+            else if (i_Array.Length == 1)
+            {
+                arrayString.Append(i_Array[0]);
+            }
+            else
+            {
+                for (int i = 0; i < i_Array.Length - 1; i++)
+                {
+                    arrayString.AppendFormat("{0}, ", i_Array[i]);
+                }
+
+                arrayString.AppendFormat("or {0}", i_Array[i_Array.Length - 1]);
+            }
+
+            return arrayString.ToString();
+        }
+
+        private static char getPlayerSymbol(Player i_Player)
+        {
+            return i_Player.PlayerPosition == ePlayerPosition.TopPlayer ? k_Player1Regular : k_Player2Regular;
         }
 
         private char getPieceSymbol(Piece i_Piece)
@@ -143,7 +176,7 @@ namespace checkers
                 {
                     printMessage(Strings.BoardMustBeInteger);
                 } 
-                else if (!((IList)Board.sr_AllowedBoardSizes).Contains(size))
+                else if (!((IList)i_AllowedBoardSizes).Contains(size))
                 {
                     printMessage(string.Format(Strings.BoardSize, allowedSizesString));
                 }
@@ -154,30 +187,6 @@ namespace checkers
             }
 
             return size;
-        }
-
-        private static string intArrayToString(int[] i_Array)
-        {
-            StringBuilder arrayString = new StringBuilder();
-            if (i_Array == null || i_Array.Length == 0)
-            {
-                arrayString.Append(string.Empty);
-            }
-            else if (i_Array.Length == 1)
-            {
-                arrayString.Append(i_Array[0]);
-            }
-            else
-            {
-                for (int i = 0; i < i_Array.Length - 1; i++)
-                {
-                    arrayString.AppendFormat("{0}, ", i_Array[i]);
-                }
-
-                arrayString.AppendFormat("or {0}", i_Array[i_Array.Length - 1]);
-            }
-
-            return arrayString.ToString();
         }
 
         public ePlayerType GetPlayerType()
@@ -239,11 +248,6 @@ namespace checkers
             o_Quit = validQuit;
 
             return move;
-        }
-
-        private static bool tryParseQuit(string i_UserInput)
-        {
-            return (i_UserInput == k_Quit) || (i_UserInput == k_QuitShortcut);
         }
 
         public bool GetUserAnotherGameInput()
@@ -376,11 +380,6 @@ namespace checkers
                     symbol,
                     PrintMove(lastMove)));
             }
-        }
-
-        private static char getPlayerSymbol(Player i_Player)
-        {
-            return i_Player.PlayerPosition == ePlayerPosition.TopPlayer ? k_Player1Regular : k_Player2Regular;
         }
 
         public void EndGameMessage()

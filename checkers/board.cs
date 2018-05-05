@@ -5,12 +5,12 @@ namespace checkers
 {
     public class Board
     {
-        public static readonly int[] sr_AllowedBoardSizes = { 6, 8, 10 };
-        private static readonly int kingPointsWorth = 4;
-        private static readonly int regularPointsWorth = 1;
+        private const int k_KingPointsWorth = 4;
+        private const int k_RegularPointsWorth = 1;
+        private static readonly int[] sr_AllowedBoardSizes = { 6, 8, 10 };
+        private readonly int r_Size;
 
         private Piece[,] m_BoardMatrix;
-        private readonly int r_Size;
         private int m_BottomPlayerPoints;
         private ePlayerPosition m_PlayerForfit;
         private bool m_PlayerHasForfit;
@@ -52,13 +52,13 @@ namespace checkers
                     if (i <= topPlayerArea && (i % 2) + (j % 2) == 1)
                     {
                         m_BoardMatrix[i, j] = new Piece(ePlayerPosition.TopPlayer);
-                        m_TopPlayerPoints += regularPointsWorth;
+                        m_TopPlayerPoints += k_RegularPointsWorth;
                     }
 
                     if (i >= bottomPlayerArea && (i % 2) + (j % 2) == 1)
                     {
                         m_BoardMatrix[i, j] = new Piece(ePlayerPosition.BottomPlayer);
-                        m_BottomPlayerPoints += regularPointsWorth;
+                        m_BottomPlayerPoints += k_RegularPointsWorth;
                     }
                 }
             }
@@ -98,7 +98,7 @@ namespace checkers
             int row = i_Move.Begin.Row > i_Move.End.Row ? i_Move.Begin.Row - 1 : i_Move.Begin.Row + 1;
             int col = i_Move.Begin.Col > i_Move.End.Col ? i_Move.Begin.Col - 1 : i_Move.Begin.Col + 1;
 
-            int numOfPoints = m_BoardMatrix[row, col].Type == ePieceType.Regular ? regularPointsWorth : kingPointsWorth;
+            int numOfPoints = m_BoardMatrix[row, col].Type == ePieceType.Regular ? k_RegularPointsWorth : k_KingPointsWorth;
             changePoints(m_BoardMatrix[row, col].PlayerPosition, -numOfPoints);
 
             m_BoardMatrix[row, col] = null;
@@ -124,13 +124,13 @@ namespace checkers
                                     && piece.Type == ePieceType.Regular)
             {
                 piece.SetKing();
-                changePoints(ePlayerPosition.BottomPlayer, kingPointsWorth - regularPointsWorth);
+                changePoints(ePlayerPosition.BottomPlayer, k_KingPointsWorth - k_RegularPointsWorth);
             }
             else if (i_Position.Row == r_Size - 1 && piece.PlayerPosition == ePlayerPosition.TopPlayer
                                                   && piece.Type == ePieceType.Regular)
             {
                 piece.SetKing();
-                changePoints(ePlayerPosition.TopPlayer, kingPointsWorth - regularPointsWorth);
+                changePoints(ePlayerPosition.TopPlayer, k_KingPointsWorth - k_RegularPointsWorth);
             }
         }
 
@@ -280,23 +280,23 @@ namespace checkers
             foreach (Position endPosition in i_EndPositions)
             {
                 eSquareStatus squareStatus = checkSquareStatus(endPosition, out ePlayerPosition squarePlayer);
-                switch (squareStatus)
+                if (squareStatus == eSquareStatus.Empty)
                 {
-                    case eSquareStatus.Empty:
-                        regularMovesList.Add(new Move(i_StartPosition, endPosition, i_Player, eMoveType.Regular));
-                        break;
-                    case eSquareStatus.Occupied when squarePlayer != i_Player:
-                        int jumpRow = i_StartPosition.Row + (2 * (endPosition.Row - i_StartPosition.Row));
-                        int jumpCol = i_StartPosition.Col + (2 * (endPosition.Col - i_StartPosition.Col));
-                        Position jumpPosition = new Position(jumpRow, jumpCol);
-                        eSquareStatus jumpSquareStatus = checkSquareStatus(jumpPosition, out squarePlayer);
-                        if (jumpSquareStatus == eSquareStatus.Empty)
-                        {
-                            regularMovesList.Add(new Move(i_StartPosition, jumpPosition, i_Player, eMoveType.Jump));
-                        }
-                        break;
-                    case eSquareStatus.OutOfBounds:
-                        break;
+                    regularMovesList.Add(new Move(i_StartPosition, endPosition, i_Player, eMoveType.Regular));
+                }
+                else if (squareStatus == eSquareStatus.Occupied && squarePlayer != i_Player)
+                {
+                    int jumpRow = i_StartPosition.Row + (2 * (endPosition.Row - i_StartPosition.Row));
+                    int jumpCol = i_StartPosition.Col + (2 * (endPosition.Col - i_StartPosition.Col));
+                    Position jumpPosition = new Position(jumpRow, jumpCol);
+                    eSquareStatus jumpSquareStatus = checkSquareStatus(jumpPosition, out squarePlayer);
+                    if (jumpSquareStatus == eSquareStatus.Empty)
+                    {
+                        regularMovesList.Add(new Move(i_StartPosition, jumpPosition, i_Player, eMoveType.Jump));
+                    }
+                }
+                else if (squareStatus == eSquareStatus.OutOfBounds)
+                {
                 }
             }
 
@@ -329,6 +329,14 @@ namespace checkers
             get
             {
                 return m_BoardMatrix;
+            }
+        }
+
+        public static int[] AllowedBoardSizes
+        {
+            get
+            {
+                return sr_AllowedBoardSizes;
             }
         }
 

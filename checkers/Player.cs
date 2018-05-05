@@ -4,9 +4,9 @@ namespace checkers
 {
     public class Player
     {
+        private readonly ePlayerPosition r_PlayerPosition;
         private List<Move> m_MoveHistory;
         private string m_Name;
-        private readonly ePlayerPosition r_PlayerPosition;
         private ePlayerType m_PlayerType;
         private int m_Points;
 

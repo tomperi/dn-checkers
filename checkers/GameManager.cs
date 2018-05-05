@@ -45,13 +45,12 @@
     public class GameManager
     {
         private const int k_MaxNameSize = 20;
+        private readonly Player r_Player1;
+        private readonly Player r_Player2;
+        private readonly CheckersConsolUI r_UI;
         private Board m_Board;
         private int m_BoardSize;
         private Player m_CurrentPlayer;
-        private readonly Player r_Player1;
-        private readonly Player r_Player2;
-
-        private readonly CheckersConsolUI r_UI;
 
         public GameManager()
         {
@@ -65,7 +64,7 @@
         {
             r_Player1.Name = r_UI.GetUserNameInput(k_MaxNameSize);
 
-            m_BoardSize = r_UI.GetUserBoardSize(Board.sr_AllowedBoardSizes);
+            m_BoardSize = r_UI.GetUserBoardSize(Board.AllowedBoardSizes);
 
             r_Player2.PlayerType = r_UI.GetPlayerType();
             r_Player2.Name = r_Player2.PlayerType == ePlayerType.Human
@@ -94,12 +93,12 @@
             r_Player2.ClearMoveHistory();
             m_CurrentPlayer = r_Player1;
             Move previousMove = null;
-            
+
             while (gameStatus == eGameStatus.Playing)
             {
                 r_UI.ClearScreen();
                 r_UI.PrintBoard(m_Board.BoardMatrix);
-                r_UI.PrintLastMove(m_CurrentPlayer);
+                r_UI.PrintLastMove(otherPlayer());
 
                 // Get a players move and preform it
                 Move currentMove = getMove(previousMove, out eMoveStatus currentMoveStatus);
@@ -124,6 +123,9 @@
 
         private void concludeSingleGame(eGameStatus i_GameStatus, ePlayerPosition i_Winner)
         {
+            r_UI.ClearScreen();
+            r_UI.PrintBoard(m_Board.BoardMatrix);
+
             int player1Points = m_Board.GetPlayerScore(r_Player1);
             int player2Points = m_Board.GetPlayerScore(r_Player2);
 
@@ -142,11 +144,11 @@
                     break;
             }
 
-            r_UI.PlayerRecivedPoints(r_Player1.Name, player1Points);
-            r_UI.PlayerRecivedPoints(r_Player2.Name, player2Points);
-         
             r_Player1.Points += player1Points;
             r_Player2.Points += player2Points;
+
+            r_UI.PlayerRecivedPoints(r_Player1.Name, player1Points);
+            r_UI.PlayerRecivedPoints(r_Player2.Name, player2Points);
 
             r_UI.PointStatus(r_Player1.Name, r_Player1.Points, r_Player2.Name, r_Player2.Points);
         }
@@ -192,6 +194,11 @@
         private void changeActivePlayer()
         {
             m_CurrentPlayer = (m_CurrentPlayer == r_Player1) ? r_Player2 : r_Player1;
+        }
+
+        private Player otherPlayer()
+        {
+            return (m_CurrentPlayer == r_Player1) ? r_Player2 : r_Player1;
         }
     }
 }
